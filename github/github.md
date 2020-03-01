@@ -135,6 +135,109 @@ git push -u origin master
 
 <img src="source/lifecycle.png" style="zoom:60%"/>
 
+### 移除文件
+
+1、从仓库stage area中移除被手工删除的文件
+
+如果用户把仓库文件夹的文件手动删除了，那么可以通过`git rm file_name`将文件从stage area移除。
+
+```python
+#1仓库文件夹中新建文件git_test.txt
+#2添加文件至stage area
+$ git add git_test.txt
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        new file:   git_test.txt
+#3手工移除文件
+$ rm git_test.txt
+$ git status
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        deleted:    git_test.txt
+#4从stage area中移除
+$ git rm git_test.txt
+rm 'git_test.txt'
+$ git status
+On branch master
+Your branch is ahead of 'origin/master' by 1 commit.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean
+
+```
+
+2、从stage area中移除文件并且将文件从磁盘删除
+
+使用`git rm -f file_name`，不仅可以将文件移除而且文件会从仓库文件夹删除
+
+```python
+#1仓库文件夹中新建文件git_test.txt
+#2添加文件至stage area
+$ git add git_test.txt
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        new file:   git_test.txt
+#3移除文件的同时删除该文件
+$ git rm -f git_test.txt
+rm 'git_test.txt'
+$ git status
+On branch master
+Your branch is ahead of 'origin/master' by 1 commit.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean
+
+```
+
+2、从stage area中移除文件但将文件保留在磁盘中
+
+使用`git rm -f file_name`，只是将文件从stage area移除，但文件还在仓库文件夹中
+
+```python
+#1仓库文件夹中新建文件git_test.txt
+#2添加文件至stage area
+$ git add git_test.txt
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        new file:   git_test.txt
+#3将文件从stage area移除，但文件还在仓库文件夹中
+$ git rm --cached git_test.txt
+rm 'git_test.txt'
+
+$ git status
+On branch master
+Your branch is ahead of 'origin/master' by 1 commit.
+  (use "git push" to publish your local commits)
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        git_test.txt
+nothing added to commit but untracked files present (use "git add" to track)
+
+```
+
+### 移动文件
+
+移动文件其实就是将文件重命名、移除文件、添加文件三个步骤的集合。我们可以使用`git mv file_before file_after`命令来实现。
+
+```
+$ git mv README.md README
+$ git status
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+    renamed:    README.md -> README
+```
+
+以上操作其实就相当于如下三个步骤：
+
+```
+$ mv README.md README
+$ git rm README.md
+$ git add README
+```
+
 
 
 ## 命令详解
