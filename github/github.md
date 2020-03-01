@@ -350,7 +350,11 @@ git diff --cached
 git commit -m "add source folder"
 ```
 
-3、使用`-a`选项，尽管使用暂存区域的方式可以精心准备要提交的细节，但有时候这么做略显繁琐。 Git 提供了一个跳过使用暂存区域的方式， 只要在提交的时候，给 `git commit` 加上 `-a` 选项，Git 就会自动把所有已经跟踪过的文件暂存起来一并提交，从而跳过 `git add` 步骤 。
+3、使用`-a`选项，尽管使用暂存区域的方式可以精心准备要提交的细节，但有时候这么做略显繁琐。 Git 提供了一个跳过使用暂存区域的方式， 只要在提交的时候，给 `git commit` 加上 `-a` 选项，Git 就会自动把所有已经跟踪过的文件暂存起来一并提交，从而跳过 `git add` 步骤，例如：
+
+```
+$ git commit -a -m "temp changes"
+```
 
 
 
@@ -364,7 +368,9 @@ git push -u origin master
 
 Git不但会把本地的master分支内容推送的远程新的master分支，还会把本地的master分支和远程的master分支关联起来，在以后的推送或者拉取时就可以简化命令，只需要使用`git push origin master`即可。
 
+### git log
 
+查看版本提交记录
 
 
 
