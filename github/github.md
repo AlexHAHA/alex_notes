@@ -102,6 +102,12 @@ git push -u origin master
 
 ## git机制
 
+### 教程参考
+
+官网教程比较重要的一章： https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository 
+
+
+
 ### 工作流
 
  Git 有三种状态，你的文件可能处于其中之一：已提交（committed）、已修改（modified）和已暂存（staged）。 
@@ -121,6 +127,7 @@ git push -u origin master
 1. 在工作目录中修改文件。
 2. 暂存文件，将文件的快照放入暂存区域。
 3. 提交更新，找到暂存区域的文件，将快照永久性存储到 Git 仓库目录。
+4. 推送至服务器，将本地的与远程的仓库协调一致。
 
 ### 文件状态
 
@@ -201,6 +208,39 @@ git remote add origin git@github.com:AlexHAHA/alex_tutorials.git
 ```
 
 将远程仓库**git@github.com:AlexHAHA/alex_tutorials.git**与本地仓库联系起来，并且把远程仓库简称为origin，当然也可以取其他名字，不过github者们默认的是origin。在其他命令中，origin就代表了这个与本地仓库关联的远程仓库。
+
+### git diff
+
+ 你可能通常会用它来回答这两个问题：当前做的哪些更新还没有暂存？ 有哪些更新已经暂存起来准备好下次提交？ 虽然 `git status` 已经通过在相应栏下列出文件名的方式回答了这个问题，但 `git diff` 将通过文件补丁的格式更加具体地显示哪些行发生了改变。 
+
+ 1、要看尚未暂存的文件更新了哪些部分，不加参数直接输入 `git diff`： 
+
+```
+git diff
+
+```
+
+  此命令比较的是工作目录中当前文件和暂存区域快照之间的差异。 也就是修改之后还没有暂存起来的变化内容。 
+
+2、若要查看已暂存的将要添加到下次提交里的内容，可以用 `git diff --staged` 命令。 这条命令将比对已暂存文件与最后一次提交的文件差异： 
+
+```
+git diff --staged
+```
+
+
+
+### git commit
+
+将暂存区（stage area）的文件添提交至新的版本中，注意这里commit的文件版本是使用`git add`命令添加至暂存区的文件版本，一旦修改了某个文件，你需要重新使用`git add`命令将其添加至暂存区作为新的更改后的版本，commit后才能在新的版本中看到这个修改。
+
+该命令接收一个字符串作为版本提交说明。
+
+```
+git commit -m "add source folder"
+```
+
+
 
 ### git push
 
