@@ -227,7 +227,13 @@ git diff
 git diff --staged
 ```
 
+3、查看已经暂存起来的变化使用命令 `git diff --cached`  ：
 
+```
+git diff --cached
+```
+
+这个命令将会显示使用`git add`之前，添加至stage area文件的修改内容。
 
 ### git commit
 
