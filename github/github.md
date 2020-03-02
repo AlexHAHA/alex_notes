@@ -100,6 +100,8 @@ git remote add origin https://github.com/AlexHAHA/alex_tutorials.git
 git push -u origin master
 ```
 
+
+
 ## git机制
 
 ### 教程参考
@@ -131,7 +133,7 @@ git push -u origin master
 
 ### 文件状态
 
- 工作目录下的每一个文件都不外乎这两种状态：已跟踪(tracked)或未跟踪(untracked，包括 unmodified, modified, or staged )。 已跟踪的文件是指那些被纳入了版本控制的文件，在上一次快照中有它们的记录，在工作一段时间后，它们的状态可能是未修改，已修改或已放入暂存区。 工作目录中除已跟踪文件以外的所有其它文件都属于未跟踪文件，它们既不存在于上次快照的记录中，也没有被放入暂存区。 初次克隆某个仓库的时候，工作目录中的所有文件都属于已跟踪文件，并处于未修改状态。 
+ 工作目录下的每一个文件都不外乎这两种状态：已跟踪(tracked，包括 unmodified, modified, or staged )或未跟踪(untracked)。 已跟踪的文件是指那些被纳入了版本控制的文件，在上一次快照中有它们的记录，在工作一段时间后，它们的状态可能是未修改，已修改或已放入暂存区。 工作目录中除已跟踪文件以外的所有其它文件都属于未跟踪文件，它们既不存在于上次快照的记录中，也没有被放入暂存区。 初次克隆某个仓库的时候，工作目录中的所有文件都属于已跟踪文件，并处于未修改状态。 
 
 <img src="source/lifecycle.png" style="zoom:60%"/>
 
@@ -237,6 +239,82 @@ $ mv README.md README
 $ git rm README.md
 $ git add README
 ```
+
+### 远程仓库
+
+#### 添加远程仓库
+
+使用`git remote add <short name> <url>`可以添加远程仓库，并且可以使用一个short name来命名远程仓库，一般默认使用origin作为第一个远程仓库的简称。
+
+```
+$ git remote add origin https://github.com/AlexHAHA/alex_tutorials.git
+$ git remote add pb https://github.com/paulboone/ticgit
+```
+
+#### 查看远程仓库
+
+使用`git remote`命令可以查看当前已经添加的远程仓库名字。
+
+```
+$ git remote
+origin
+```
+
+使用`git remote -v`命令可以查看远程仓库的具体信息
+
+```
+Administrator@8F5GS3NCZXCQ2IF MINGW64 /d/deeplearning/alex_notes (master)
+$ git remote -v
+origin  git@github.com:AlexHAHA/alex_notes.git (fetch)
+origin  git@github.com:AlexHAHA/alex_notes.git (push)
+```
+
+如果想要查看某一个远程仓库的更多信息，可以使用 `git remote show [remote-name]` 命令。 如果想以一个特定的缩写名运行这个命令，例如 `origin`，会得到像下面类似的信息：
+
+```
+$ git remote show origin
+* remote origin
+  Fetch URL: git@github.com:AlexHAHA/alex_notes.git
+  Push  URL: git@github.com:AlexHAHA/alex_notes.git
+  HEAD branch: master
+  Remote branch:
+    master tracked
+  Local branch configured for 'git pull':
+    master merges with remote master
+  Local ref configured for 'git push':
+    master pushes to master (up to date)
+```
+
+#### 
+
+#### 从远程仓库中抓取与拉取
+
+从远程仓库中抓取使用`git fetch [remote-shortname]`，这个命令只会下载数据到本地仓库，但不会进行代码合并的操作，你必须自己手动进行合并。
+
+我们可以使用拉取操作`git pull [remote-shortname]`，该命令会自动使用`git fetch`命令抓取数据，并合并到当前分支中。
+
+#### 远程仓库的移除与重命名
+
+如果想要重命名引用的名字可以运行 `git remote rename` 去修改一个远程仓库的简写名。 例如，想要将 `pb` 重命名为 `paul`，可以用 `git remote rename` 这样做：
+
+```console
+$ git remote rename pb paul
+$ git remote
+origin
+paul
+```
+
+值得注意的是这同样也会修改你的远程分支名字。 那些过去引用 `pb/master` 的现在会引用 `paul/master`。
+
+如果因为一些原因想要移除一个远程仓库——你已经从服务器上搬走了或不再想使用某一个特定的镜像了，又或者某一个贡献者不再贡献了——可以使用 `git remote rm` ：
+
+```console
+$ git remote rm paul
+$ git remote
+origin
+```
+
+
 
 
 
