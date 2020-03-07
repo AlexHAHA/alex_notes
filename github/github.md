@@ -293,6 +293,12 @@ $ git remote show origin
 
 我们可以使用拉取操作`git pull [remote-shortname]`，该命令会自动使用`git fetch`命令抓取数据，并合并到当前分支中。
 
+```
+$git pull origin master
+```
+
+
+
 #### 远程仓库的移除与重命名
 
 如果想要重命名引用的名字可以运行 `git remote rename` 去修改一个远程仓库的简写名。 例如，想要将 `pb` 重命名为 `paul`，可以用 `git remote rename` 这样做：
@@ -347,6 +353,27 @@ $ git push origin v1.0
 1、一般在master分支下新建分支
 
 2、新建分支，仅仅是“新建一个指向当前HEAD的指针”，不论你修改了那些文件，只要没有commit，新建的branch就与当前master一样。
+
+## 问题解决
+
+### 推送错误1：两个人修改同一个分支
+
+如果有两个人同时fetch了一个分支，第一个人修改后提交、推送，第二个人修改后无法推送，这时出现如下错误：
+
+```
+error: failed to push some refs to 'git@github.com:AlexHAHA/alex_notes.git'
+hint: Updates were rejected because the remote contains work that you do
+hint: not have locally. This is usually caused by another repository pushing
+hint: to the same ref. You may want to first integrate the remote changes
+hint: (e.g., 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+```
+
+解决方法：
+
+先 git fetch origin 然后git merge origin/master, 和本地分支合并, 之后再push。
+
+
 
 ## 命令详解
 
