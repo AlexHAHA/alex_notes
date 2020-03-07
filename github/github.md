@@ -118,9 +118,9 @@ git push -u origin master
 
 - 第一个是你的 `working directory 工作目录`，它持有实际文件；
 - 第二个是 `staging area 暂存区`，它像个缓存区域，临时保存你要改动的文件名列表；
-- 第三个是`.git directory(Repository)`，即`HEAD`，它指向你最后一次提交的结果。
+- 第三个是`.git directory(Repository)`。
 
-我们使用`git add`命令，将文件添加至缓存区域，使用`git commit -m`实际提交改动，也即是改动已经提交到了HEAD，最后使用`git push`命令将改动推送至远端仓库。
+我们使用`git add`命令，将文件添加至缓存区域，使用`git commit -m`实际提交改动，也即是改动已经提交到了HEAD，只有使用commit后，才会有快照保存并移动HEAD指向最新的快照，最后使用`git push`命令将改动推送至远端仓库。
 
 <img src="source/areas.png" style="zoom:60%"/>
 
@@ -316,7 +316,37 @@ origin
 
 
 
+### 分支
 
+#### 创建分支
+
+使用`git branch [branch_name]`新建分支，并使用`git checkout [branch_name]`切换至分支。
+
+```
+$ git branch v1.0
+$ git checkout v1.0
+Switched to branch 'v1.0'
+#或者使用如下更简单的命令代替
+# git checkout -b v1.0
+```
+
+
+
+#### 推送分支至远程服务器
+
+首先切换至分支，然后` git push origin [branch name]`，即可推送。
+
+```
+$ git checkout v1.0
+Switched to branch 'v1.0'
+$ git push origin v1.0
+```
+
+特别注意，要推送至origin的分支名字必须与当前的分支名字一样，如果名字不一样，git不会在远程服务器端新建分支，而且会报错。
+
+1、一般在master分支下新建分支
+
+2、新建分支，仅仅是“新建一个指向当前HEAD的指针”，不论你修改了那些文件，只要没有commit，新建的branch就与当前master一样。
 
 ## 命令详解
 
