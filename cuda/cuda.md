@@ -1,5 +1,11 @@
 
 
+## 显卡计算性能
+
+https://developer.nvidia.com/cuda-gpus 
+
+
+
 ## visual studio安装
 
 可在vs官网下载vs2017或vs2019 community在线安装版本，这个步骤需要登录Microsoft账户，账户名为:xueyuankui.good@163.com，密码UESTC.dream2013。
@@ -39,6 +45,8 @@ CUDA_SDK_PATH = C:\ProgramData\NVIDIA Corporation\CUDA Samples\v10.1
  CUDA_SDK_LIB_PATH = %CUDA_SDK_PATH%\common\lib\x64
 
 最后在cmd窗口输入set cuda查看环境变量的设置是否正确。
+
+注意：环境变量配置完成后，cmd窗口需要重启才能确保环境变量配置生效。
 
 ### cudnn
 
