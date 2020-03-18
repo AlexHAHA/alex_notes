@@ -674,7 +674,7 @@ recall75 = torch.sum(iou75 * detected_mask) /
                     (obj_mask.sum() + 1e-16)
 ```
 
-# Prerequisites
+# Metrics
 
 ## IoU
 
@@ -734,7 +734,7 @@ def bbox_iou(box1, box2):
     return iou
 ```
 
-## TP,FP,TN,FN
+## TP FP TN FN
 
 对于二分类来说，Positive代表正样本/正类，Negative代表负样本/负类，True代表对样本分类正确，False代表对样本分类错误。对于分类的结果我们可以以下面图示作为参考：
 
