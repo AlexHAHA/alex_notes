@@ -26,6 +26,8 @@ UESTC.dream2013
 
 #### 下载cuda安装程序
 
+下载cuda前首先确认系统和版本，Windows系统的win10版本和win7版本对应的cuda不能通用！
+
 下载网站为<https://developer.nvidia.com/cuda-downloads>，根据pytorch支持情况选择cuda版本，目前pytorch最高支持10.1，那么就下载cuda10.1版本（可以在网页中Legacy Releases中找到历史版本），下载后文件例如为：**cuda_10.1.105_418.96_win10.exe**。
 
 以管理员权限运行该安装程序，其安装过程中的默认解压路径：C:\Users\ADMINI~1\AppData\Local\Temp\CUDA，解压完毕后进入安装阶段，默认安装路径：C:\Program Files\NVIDIA GPU Computing Toolkit。
@@ -36,11 +38,13 @@ UESTC.dream2013
 
 #### 环境变量
 
-添加环境变量：
+一般情况下（win7系统），安装后自动添加环境变量CUDA_PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1，然后再添加其余环境变量：
 
-CUDA_SDK_PATH = C:\ProgramData\NVIDIA Corporation\CUDA Samples\v10.1
  CUDA_LIB_PATH = %CUDA_PATH%\lib\x64
  CUDA_BIN_PATH = %CUDA_PATH%\bin
+
+CUDA_SDK_PATH = C:\ProgramData\NVIDIA Corporation\CUDA Samples\v10.1
+
  CUDA_SDK_BIN_PATH = %CUDA_SDK_PATH%\bin\win64
  CUDA_SDK_LIB_PATH = %CUDA_SDK_PATH%\common\lib\x64
 
@@ -51,6 +55,8 @@ CUDA_SDK_PATH = C:\ProgramData\NVIDIA Corporation\CUDA Samples\v10.1
 ### cudnn
 
 #### 下载
+
+下载cudnn前首先确认系统和版本，Windows系统的win10版本和win7版本对应的cudnn不能通用，而且要安装与cuda对应的版本！
 
 <https://developer.nvidia.com/rdp/cudnn-download>
 
