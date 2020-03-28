@@ -354,6 +354,106 @@ $ git push origin v1.0
 
 2、新建分支，仅仅是“新建一个指向当前HEAD的指针”，不论你修改了那些文件，只要没有commit，新建的branch就与当前master一样。
 
+### 合并
+
+使用git merge用于将 **合并指定分支到当前自己的分支** 。
+
+例如你需要将分支master合并入分支alex，那么你需要先切换至分支alex，然后使用命令**git merge master**，进行合并操作。
+
+```
+admin@LAPTOP-K5482OIO MINGW64 ~/alex_gitrepos/git_test (alex)
+$ git merge master
+Auto-merging alex.py
+CONFLICT (content): Merge conflict in alex.py
+Automatic merge failed; fix conflicts and then commit the result.
+
+```
+
+如果有合并冲突，放弃此次合并，则可以使用**git merge --abort**命令：
+
+```
+admin@LAPTOP-K5482OIO MINGW64 ~/Desktop/git_test (master|MERGING)
+$ git merge --abort
+```
+
+如果合并有冲突，并且希望继续进行合并，那么可以使用vs code查看冲突位置进行手动修改。
+
+修改后查看状态如下：
+
+```
+admin@LAPTOP-K5482OIO MINGW64 ~/alex_gitrepos/git_test (alex|MERGING)
+$ git status
+On branch alex
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
+
+Changes to be committed:
+        new file:   master.py
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+        both modified:   alex.py
+
+```
+
+然后将手动merge的文件添加后，进行提交：
+
+```
+admin@LAPTOP-K5482OIO MINGW64 ~/alex_gitrepos/git_test (alex)
+$ git add alex.py
+admin@LAPTOP-K5482OIO MINGW64 ~/alex_gitrepos/git_test (alex|MERGING)
+$ git commit -m "merge master to alex"
+[alex d0ea88a] merge master to alex
+```
+
+
+
+## 撤销
+
+### 撤销方式一：git reset
+
+git log  查看后退对应版本号
+git reset --hard 【版本号】
+如果需要远程推送的话 git push  --forced
+
+- 查看以前的版本号
+
+```
+admin@LAPTOP-K5482OIO MINGW64 ~/alex_gitrepos/git_test (alex)
+$ git log
+commit d0ea88ad5946072daec7514025221f5177225024 (HEAD -> alex)
+Merge: a1654f7 477da7b
+Author: AlexHAHA <xueyuankui.good@163.com>
+Date:   Sat Mar 28 16:34:39 2020 +0800
+
+    merge master to alex
+
+commit a1654f73eb3f520ecd7637d925d923e31d2ab6b6
+Author: AlexHAHA <xueyuankui.good@163.com>
+Date:   Sat Mar 28 16:27:21 2020 +0800
+
+    change add fun, delete b
+```
+
+- 回退版本
+
+```
+admin@LAPTOP-K5482OIO MINGW64 ~/alex_gitrepos/git_test (alex)
+$ git reset --hard a1654f7
+HEAD is now at a1654f7 change add fun, delete b
+```
+
+### 撤销方式二：git revert
+
+ 当 merge 以后还有别的操作和改动时，用 git revert 也能撤销 merge。
+
+```
+$ git revert -m 【要撤销的那条merge线的编号，从1开始计算（怎么看哪条线是几啊？）】 【merge前的版本号】
+```
+
+
+
 ## 问题解决
 
 ### 推送错误1：两个人修改同一个分支
