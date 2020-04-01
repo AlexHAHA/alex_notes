@@ -356,6 +356,17 @@ $ git push origin v1.0
 
 2、新建分支，仅仅是“新建一个指向当前HEAD的指针”，不论你修改了那些文件，只要没有commit，新建的branch就与当前master一样。
 
+#### 从远程仓库拉取新的分支
+
+```
+git branch -a          //查看本地是否具有dev分支，这一步其实意义不大
+git fetch origin dev   //把远程分支拉到本地
+git checkout -b dev origin/dev   //在本地创建分支dev并切换到该分支
+git pull origin dev              //把某个分支的内容拉到本地
+```
+
+
+
 ### 合并
 
 使用git merge用于将 **合并指定分支到当前自己的分支** 。
@@ -409,11 +420,21 @@ $ git commit -m "merge master to alex"
 [alex d0ea88a] merge master to alex
 ```
 
+### 修改撤销
+
+如果使用vscode编辑器，可以看到修改文件之后使用discard操作可以进行修改的撤销。对应到git命令如下：
+
+```
+git checkout -- 文件  (注意双横杠和文件之前有空格)
+例如：
+git checkout -- src/  #撤销文件夹src的修改
+```
 
 
-## 撤销
 
-### 撤销方式一：git reset
+### commit撤销
+
+#### 撤销方式一：git reset
 
 git log  查看后退对应版本号
 git reset --hard 【版本号】
@@ -446,7 +467,7 @@ $ git reset --hard a1654f7
 HEAD is now at a1654f7 change add fun, delete b
 ```
 
-### 撤销方式二：git revert
+#### 撤销方式二：git revert
 
  当 merge 以后还有别的操作和改动时，用 git revert 也能撤销 merge。
 
