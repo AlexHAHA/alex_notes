@@ -337,6 +337,10 @@ $$
 
 非极大值抑制在目标识别中的作用是去除冗余的bounding box，保留最好的一个，NMS intends to cure the problem of multiple detections of the same image。
 
+输出的检测结果shape为 (batch_size, object_number, 7)，最后一个维度对应的格式为：(x1, y1, x2, y2, object_conf, class_score, class_pred)。
+
+
+
 ## 训练过程
 
 训练过程就是根据目标函数进行最优化，不断调整网络模型参数的过程。
