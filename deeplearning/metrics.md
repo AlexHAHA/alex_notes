@@ -4,9 +4,9 @@
 
 IoU可以用来评估目标检测器的性能，例如下图中给定groud-truth bounding box和检测器的输出predicted bounding box，而IoU就是两个box的交集与并集的比值。
 
-<img src="C:/Users/admin/alex_gitrepos/alex_notes/yolov3/source/IoU1.png" style="zoom:40%"/>
+<img src="source/IoU1.png" style="zoom:40%"/>
 
-<img src="C:/Users/admin/alex_gitrepos/alex_notes/yolov3/source/IoU2.png" style="zoom:40%"/>
+<img src="source/IoU2.png" style="zoom:40%"/>
 
 python编程实现
 
@@ -62,7 +62,7 @@ def bbox_iou(box1, box2):
 
 对于二分类来说，Positive代表正样本/正类，Negative代表负样本/负类，True代表对样本分类正确，False代表对样本分类错误。对于分类的结果我们可以以下面图示作为参考：
 
-<img src="C:/Users/admin/alex_gitrepos/alex_notes/yolov3/source/TFPN_1.png" style="zoom:80%"/>
+<img src="source/TFPN_1.png" style="zoom:80%"/>
 
 上图矩形左半部分是positives，右半部分是negatives，圆圈内的表示预测为positive的类别，圆圈外的是预测为negative的类别。
 
@@ -77,7 +77,7 @@ def bbox_iou(box1, box2):
 
 precision就是精确率的意思，即”分类器预测为正样本中确实为正样本所占的比例“，使用公式表示如下：
 
-<img src="C:/Users/admin/alex_gitrepos/alex_notes/yolov3/source/TFPN_precision.png" style="zoom:30%"/>
+<img src="source/TFPN_precision.png" style="zoom:30%"/>
 
 即衡量的是一个分类器分出来的正类的确是正类的概率。两种极端情况就是，如果精度是100%，就代表所有分类器分出来的正类确实都是正类。如果精度是0%，就代表分类器分出来的正类没一个是正类。
 
@@ -93,7 +93,7 @@ precision就是精确率的意思，即”分类器预测为正样本中确实�
 
 recall就是召回率的意思，即“所有正样本中被分类器确实预测为正样本所占的比例”，使用公式表示如下：
 
-<img src="C:/Users/admin/alex_gitrepos/alex_notes/yolov3/source/TFPN_recall.png" style="zoom:30%"/>
+<img src="source/TFPN_recall.png" style="zoom:30%"/>
 
 衡量的是一个分类能把所有的正类都找出来的能力。两种极端情况，如果召回率是100%，就代表所有的正类都被分类器分为正类。如果召回率是0%，就代表没一个正类被分为正类。
 
@@ -105,7 +105,7 @@ AP即**Average Precision**，平均精度的意思，AP是综合考虑precision�
 
 其中对于待检测类别的检测框有8个，实际上真实类别框共有6个。
 
-<img src="C:/Users/admin/alex_gitrepos/alex_notes/yolov3/source/ap_1.png" style="zoom:40%"/>
+<img src="source/ap_1.png" style="zoom:40%"/>
 
 ### 计算TP，FP
 
@@ -124,13 +124,13 @@ AP即**Average Precision**，平均精度的意思，AP是综合考虑precision�
 
 ### 计算Recall,Precision
 
-由自信度从大到小排，并记录累计TP（AccTP）和累计FP（AccFP）。个人理解，原因是自信度越大是TP的概率就高。
+由置信度从大到小排，并记录累计TP（AccTP）和累计FP（AccFP）。个人理解，原因是自信度越大是TP的概率就高。
 
 Precision = AccTP / (AccTP+AccFP)，随着检测框数量增多，Precision有整体下降趋势。
 
 Recall = AccTP / (AccTP+AccTN) = AccTP/所有真实框数量 = AccTP/6，由于Recall在真实框数量一定情况下仅仅与累计TP有关，故Recall只会增大，不会减小，作为横坐标正合适。这其实也就代表着，随着检测框数量的增多，Recall慢慢增大。
 
-现在将每个检测框，按照自信度由大到小排列，得到结果如下表：
+现在将每个检测框，按照置信度由大到小排列，得到结果如下表：
 
 | image | detection | confidience | TP   | FP   | AccTP | AccFP | Precision | Recall |
 | ----- | --------- | ----------- | ---- | ---- | ----- | ----- | --------- | ------ |
@@ -143,19 +143,25 @@ Recall = AccTP / (AccTP+AccTN) = AccTP/所有真实框数量 = AccTP/6，由于R
 | 3     | G         | 40%         | 1    | 0    | 5     | 2     | 0.714     | 0.833  |
 | 2     | E         | 30%         | 0    | 1    | 5     | 3     | 0.625     | 0.833  |
 
+
+
 ### 绘制曲线图
 
 显然随着我们选定的样本越来也多，recall一定会越来越高，而precision整体上会呈下降趋势。把recall当成横坐标，precision当成纵坐标，即可得到常用的precision-recall曲线。
 
-<img src="C:/Users/admin/alex_gitrepos/alex_notes/yolov3/source/ap_3.png" style="zoom:40%"/>
+<img src="source/ap_3.png" style="zoom:40%"/>
 
 ### AP计算
 
 根据VOC2010以后的计算方法，我们绘制红色短划线，红色短划线是将锯齿状最高点与左边垂直线条连接而成，红色短划线与x=0和y=0轴而组成的面积就是AP。
 
-<img src="C:/Users/admin/alex_gitrepos/alex_notes/yolov3/source/ap_4.png" style="zoom:40%"/>
+<img src="source/ap_4.png" style="zoom:40%"/>
 
 即AP=1\*0.5 + 0.8\*(0.666-0.5) + 0.714/*(0.833-0.666) = 0.5 + 0.1328 + 0.119 = 0.752 = 75.2%
+
+## Note:
+
+- 如果置信度改变，那么对于AP的计算肯定会有些影响，AP的计算结果会不同。
 
 ## mAP
 
