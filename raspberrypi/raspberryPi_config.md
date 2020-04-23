@@ -2,8 +2,6 @@
 
 该手册针对树莓派B3/B3+
 
-
-
 ## 系统备份方法
 
 ### 使用Win32 Disk Imager
@@ -73,9 +71,68 @@ deb-src http://mirrors.tuna.tsinghua.edu.cn/raspbian/raspbian/ wheezy main contr
 
    $ sudo apt upgrade
 
-   
+## 网络设置
+
+### 设置静态IP
+
+我们通过编辑`/etc/dhcpcd.conf`配置文件来进行IP静态绑定。
+
+```
+$ sudo vi /etc/dhcpcd.conf
+```
+
+对于无线网卡，在底部添加：
+
+```
+interface wlan0 #网卡名
+inform 192.168.1.100/24                # 树莓派IP
+static routers=192.168.1.1	           # 路由器IP
+static domain_name_servers=192.168.1.1 #DNS,也是路由IP
+```
+
+对于有线网卡：
+
+```
+interface eth0 # 网卡名
+static ip_address=192.168.1.100/24     # 树莓派IP
+static routers=192.168.1.1	           # 路由器IP
+static domain_name_servers=192.168.1.1 #DNS,也是路由IP
+```
+
+### WiFi操作
+
+```
+sudo ifdown wlan0  #关闭WiFi
+sudo ifup wlan0     #打开WiFi
+ifconfig wlan0 #查看是否连接网络（有inet addr地址则说明连接上）
+```
+
+### 添加WiFi网络
+
+如果希望开机启动就自动连接一个新的WiFi，则编辑`/etc/wpa_supplicant/wpa_supplicant.conf`，在文件底部添加：
+
+```
+network={
+		ssid="alex"
+		psk="12345678"
+}
+```
+
+
+
+### 彻底关闭WiFi
+
+在文件`/boot/config.txt`后追加：
+
+```
+dtoverlay=pi3-disable-wifi
+```
+
+
 
 ## 树莓派WiFi热点
+
+### 安装create_ap
 
 基于GitHub开源项目：https://github.com/oblique/create_ap
 
@@ -103,7 +160,7 @@ deb-src http://mirrors.tuna.tsinghua.edu.cn/raspbian/raspbian/ wheezy main contr
 
 6. 在重启前关闭连接的WiFi，重启后即可出现热点。
 
-**问题：**
+### 问题
 
 1. 有时候hostapd安装时出现版本冲突问题，使用sudo aptitude install hostapd，根据提示进行版本调整即可。
 2. 测试时确保树莓派没有连接任何WiFi！不然无法创建热点
