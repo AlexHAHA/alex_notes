@@ -68,7 +68,7 @@ You can initialize this repository with code from a Subversion, Mercurial, or TF
 
 新建好GitHub仓库后，可以根据提示进行代码上传，上传的方式主要有如下几种。
 
-#### 方式1：新建本地仓库，然后上传
+#### 方式1：远程仓库没有任何文件
 
 首先创建一个与GitHub仓库同样名字的文件夹，例如alex_tutorials，打开git bash进入该文件夹后，根据如下命令进行操作
 
@@ -91,7 +91,27 @@ git push origin master
 
 特别注意：为了保证仓库项目的大小不至于太大，尽量只放代码，不要放较大的压缩包、参数文件等。
 
-#### 方式2：上传本地现有仓库
+#### 方式3：远程仓库有文件
+
+如果远程仓库有README.md之类的文件，根据如下步骤执行：
+
+首先创建一个与GitHub仓库同样名字的文件夹，例如alex_tutorials，打开git bash进入该文件夹后，根据如下命令进行操作
+
+```
+git init
+git remote add origin https://github.com/AlexHAHA/alex_tutorials.git
+git pull origin master
+```
+
+然后在添加本地Untracked的文件，执行如下操作：
+
+```
+git add *
+git commit -m "first add files and code"
+git push origin master
+```
+
+#### 方式3：上传本地现有仓库
 
 打开git bash，进入仓库文件夹后，输入如下命令：
 
@@ -136,6 +156,28 @@ git push -u origin master
  工作目录下的每一个文件都不外乎这两种状态：已跟踪(tracked，包括 unmodified, modified, or staged )或未跟踪(untracked)。 已跟踪的文件是指那些被纳入了版本控制的文件，在上一次快照中有它们的记录，在工作一段时间后，它们的状态可能是未修改，已修改或已放入暂存区。 工作目录中除已跟踪文件以外的所有其它文件都属于未跟踪文件，它们既不存在于上次快照的记录中，也没有被放入暂存区。 初次克隆某个仓库的时候，工作目录中的所有文件都属于已跟踪文件，并处于未修改状态。 
 
 <img src="source/lifecycle.png" style="zoom:60%"/>
+
+### 添加文件
+
+仓库文件夹新增了文件后的状态是Untracked，可以使用`git add <file>`命令添加：
+
+```
+#添加文件
+git add README.md
+#添加所有文件
+git add *   
+#添加文件夹
+git add folder
+```
+
+如果添加了文件后希望撤销这步操作，可以使用`git restore --staged <file>`
+
+```
+#撤销所有staged的文件
+git restore --staged *
+```
+
+
 
 ### 移除文件
 
@@ -286,8 +328,6 @@ $ git remote show origin
   Local ref configured for 'git push':
     master pushes to master (up to date)
 ```
-
-#### 
 
 #### 从远程仓库中抓取与拉取
 
