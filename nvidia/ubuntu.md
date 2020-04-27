@@ -1,4 +1,54 @@
+## 镜像源
+
+通过编辑`/etc/apt/sources.list`配置文件，添加镜像源。
+
+```
+sudo vim /etc/apt/sources.list
+#添加阿里云等镜像源
+sudo apt update
+sudo apt upgrade
+```
+
+#### 阿里云更新源
+
+```
+deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse
+```
+
+
+
 ## Snap
+
+Snap是Ubuntu母公司Canonical于2016年4月发布Ubuntu16.04时候引入的一种安全的、易于管理的、沙盒化的软件包格式，与传统的dpkg/apt有着很大的区别。Snap可以让开发者将他们的软件更新包随时发布给用户，而不必等待发行版的更新周期；其次Snap应用可以同时安装多个版本的软件
+
+snap安装软件后，可以在`/snap`中找到各类软件的安装目录。
+
+由于snap软件包太多，光靠命令搜索很麻烦，可以去网站`https://uappexplorer.com/snaps`查看snap已经支持的软件包。
+
+### 基础命令
+
+| 命令                             |                                                         |
+| -------------------------------- | ------------------------------------------------------- |
+| snap whami                       | 查看你是否通过Ubuntu One登陆Snap                        |
+| snap login                       | 通过Ubuntu One登陆Snap                                  |
+| snap find python                 | 在snapstore中寻找软件(如python)                         |
+| snap info python                 | 查看软件更多信息                                        |
+| sudo snap install [yoursoftware] | 安装软件                                                |
+| sudo snap list                   | 查询已经安装的软件                                      |
+| sudo snap remove [yoursoftware]  | 卸载软件                                                |
+| sudo snap switch --channel=xxxxx | 更换安装通道；snap默认通道stable；candidate是发行版通道 |
+| sudo snap refresh [yoursoftware] | 更新软件                                                |
+
+
 
 ### 示例一：应用程序snap打包
 
