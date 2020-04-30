@@ -437,6 +437,12 @@ _,best_n = ious.max(0)
 
 那么沿着行进行比较获取每一列中最大值所在的行为：best_n = [2,1,0,0]，这个结果意味着四个目标对应yolo1最优anchor分别是第3个，第2个，第1个，第1个。
 
+**Note:**如果希望获取最优的anchor，需要针对自己的数据集聚类出最适配的anchor。可以参考如下：
+
+参考一：https://github.com/lars76/kmeans-anchor-boxes。
+
+参考二：https://mp.weixin.qq.com/s?__biz=MzA4MjY4NTk0NQ==&mid=2247484186&idx=1&sn=6b2f83ab797f5d585b46aa749c8bf169&scene=21#wechat_redirect
+
 #### 获取目标的位置索引
 
 targets的第3列和第4列表示的是目标中心点的位置，将这两列转换成正整数，即：
