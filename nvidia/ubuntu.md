@@ -1,6 +1,21 @@
+## 查看版本信息
+
+命令`lsb_release -a`
+
+```
+Distributor ID: Ubuntu           //类别是ubuntu
+Description:  Ubuntu 16.04.3 LTS //16年3月发布的稳定版本，LTS是Long Term Support：长时间支持版本
+Release:    16.04               //发行日期或者是发行版本号
+Codename:   xenial              //ubuntu的代号名称
+```
+
+命令`uname -a`
+
+显示linux的内核版本和系统是多少位的：X86_64代表系统是64位的。
+
 ## 镜像源
 
-通过编辑`/etc/apt/sources.list`配置文件，添加镜像源。
+通过编辑`/etc/apt/sources.list`配置文件，添加镜像源。特别注意的是，一定将sources.list的所有内容删除后再写入新的镜像源。
 
 ```
 sudo vim /etc/apt/sources.list
@@ -9,7 +24,7 @@ sudo apt update
 sudo apt upgrade
 ```
 
-#### 阿里云更新源
+#### 阿里云镜像源
 
 ```
 deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse
@@ -24,7 +39,31 @@ deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted univer
 deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse
 ```
 
+#### 清华镜像源
 
+```
+deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic main restricted universe multiverse
+deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic-security main restricted universe multiverse
+deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic-updates main restricted universe multiverse
+deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic-proposed main restricted universe multiverse
+deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic-backports main restricted universe multiverse
+deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic main restricted universe multiverse
+deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic-security main restricted universe multiverse
+deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic-updates main restricted universe multiverse
+deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic-proposed main restricted universe multiverse
+deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic-backports main restricted universe multiverse
+```
+
+## samba
+
+使用samba，Ubuntu与win10共享文件（<https://www.jianshu.com/p/5ffd9a8361de>）。
+
+```
+sudo apt-get install samba
+sudo apt-get install smbclient
+#安装完成后执行 
+samba -V
+```
 
 ## Snap
 
