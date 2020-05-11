@@ -39,6 +39,37 @@
 |                                |             |                                                              |
 |                                |             |                                                              |
 
+## 添加国内镜像源
+
+打开anaconda prompt窗口，执行如下命令：
+
+```
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+# 设置搜索时显示通道地址
+conda config --set show_channel_urls yes
+```
+
+在C:\Users\<你的用户名> 下就会生成配置文件.condarc，如下
+
+```
+channels:
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+  - defaults
+ssl_verify: true
+show_channel_urls: true
+```
+
+通过命令**conda info**查看配置修改是否生效
+
+删除镜像源
+
+```
+conda config --remove channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+```
+
 
 
 ## ubuntu下安装
