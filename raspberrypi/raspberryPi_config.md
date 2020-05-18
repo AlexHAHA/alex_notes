@@ -31,6 +31,56 @@
 
 **备注：**树莓派识别NTFS格式的SD卡，请先将SD卡格式化(Windows->右键->格式化)时选择file system=NTFS。
 
+## 无屏配置
+
+本方法适用很多时候没有显示屏，进行树莓派访问和设置。
+
+参考：https://www.cnblogs.com/dongxiaodong/p/9708760.html
+
+https://shumeipai.nxez.com/2017/09/13/raspberry-pi-network-configuration-before-boot.html
+
+### WIFI
+
+系统烧写到SD卡后，在windows文件浏览器打开SD卡，可看到SD卡对应的盘符是boot，在根目录下新建文件:**wpa_supplicant.conf **
+
+然后添加如下内容：
+
+```
+country=CN
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+ 
+network={
+ssid="WiFi-A"
+psk="12345678"
+key_mgmt=WPA-PSK
+priority=1
+}
+```
+
+### ssh
+
+在SD卡根目录下新建**ssh**文件，不用填写后缀和内容。开机后通过某些手段获取树莓派IP后，即可通过如下命令进行远程连接：
+
+```
+ssh pi@192.168.1.xxx  
+#密码是raspberry
+```
+
+可以Windows安装git，使用git Bash进行ssh。
+
+远程连接后，输入exit是退出ssh。
+
+### 全网段ping
+
+如果树莓派已经连接WIFI或路由器，你可以通过全网段ping，找出丢包为0%的IP地址，这些IP地址基本上就是潜在的树莓派地址。
+
+```
+FOR /L %I in (1,1,255) DO PING 192.168.3.%I -n 1 -w 100
+```
+
+
+
 ## 树莓派密码
 
 默认用户名为:pi
