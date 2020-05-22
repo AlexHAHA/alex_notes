@@ -68,6 +68,38 @@ darknet.exe detector test cfg/coco.data cfg/yolov4.cfg yolov4.weights -thresh 0.
 
 ## DLL编译与使用
 
+根据项目介绍，如果你希望在自己的c++工程下使用darknet，可以通过将最主要的功能部分编译为DLL，非常符合软件工程开发流程规范，只需要知道DLL提供的功能接口函数即可调用。
+
+项目中的DLL工程**darknet\build\darknet\yolo_console_dll.sln**就是为了完成DLL生成的，你所关心的函数接口都在文件`yolo_v2_class.hpp`中定义，API如下：
+
+```c++
+struct bbox_t {
+    unsigned int x, y, w, h;    // (x,y) - top-left corner, (w, h) - width & height of bounded box
+    float prob;                    // confidence - probability that the object was found correctly
+    unsigned int obj_id;        // class of object - from range [0, classes-1]
+    unsigned int track_id;        // tracking id for video (0 - untracked, 1 - inf - tracked object)
+    unsigned int frames_counter;// counter of frames on which the object was detected
+};
+
+class Detector {
+public:
+        Detector(std::string cfg_filename, std::string weight_filename, int gpu_id = 0);
+        ~Detector();
+
+        std::vector<bbox_t> detect(std::string image_filename, float thresh = 0.2, bool use_mean = false);
+        std::vector<bbox_t> detect(image_t img, float thresh = 0.2, bool use_mean = false);
+        static image_t load_image(std::string image_filename);
+        static void free_image(image_t m);
+// 函数重载，使用opencv情况下调用如下函数。
+#ifdef OPENCV
+        std::vector<bbox_t> detect(cv::Mat mat, float thresh = 0.2, bool use_mean = false);
+	std::shared_ptr<image_t> mat_to_image_resize(cv::Mat mat) const;
+#endif
+};
+```
+
+如何你不太明白如何使用这些函数，可以参考文件[yolo_console_dll.cpp](https://github.com/AlexeyAB/darknet/blob/master/src/yolo_console_dll.cpp)。
+
 ### darknet DLL生成
 
 打开工程**darknet\build\darknet\yolo_console_dll.sln**，配置为release和x64，
@@ -88,11 +120,11 @@ C:\opencv_3.0\build\include\opencv2
 
 Note:一定注意，如果希望在用户自定义的工程中使用DLL，那么也要如此配置。
 
-
-
-### darknet DLL 使用
+## darknet DLL 使用(C++)
 
 用户可以新建一个c++工程命名为**project_darknet**，需要进行如下设置
+
+### 用户工程环境配置
 
 #### darknet文件迁移
 
@@ -157,9 +189,7 @@ cublas.lib;curand.lib;cudart.lib;cuda.lib
 $(CUDA_PATH)\lib\$(PlatformName);$(CUDNN)\lib\x64;$(cudnn)\lib\x64;
 ```
 
-### 添加宏
-
-### sprintf
+#### 添加宏
 
 右击打开项目属性管理器 -> C/C++ -> 预处理器 -> 添加宏定义：`_CRT_SECURE_NO_DEPRECATE`，若该宏定义没有，会出现如下报错：
 
@@ -168,4 +198,14 @@ $(CUDA_PATH)\lib\$(PlatformName);$(CUDNN)\lib\x64;$(cudnn)\lib\x64;
 错误	C4996	'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.	project_darknet	c:\users\admin\alex_gitrepos\cplusplus\project_darknet\project_darknet\yolo_v2_class.hpp	191
 
 ```
+
+### 编码相关
+
+#### 类初始化时数据输出打印
+
+文件parser.c中的函数parse_net_options()，会打印模型和计算机相关的参数。
+
+这些打印信息只有在实例化时出现，正常识别过程中不会有，所以不会影响识别速度。
+
+## darknet DLL使用(python)
 
