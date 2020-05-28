@@ -1,3 +1,11 @@
+# yolo开发教程
+
+作者：薛远奎
+
+日期：2020.05.01
+
+为了工程化考虑，yolo作为识别算法需要打包作为用户项目的底层模块，pytorch版本的yolo不适合做工程化部署，故我们选择yolov4作者AlexAB的开源项目进行二次开发。
+
 AlexAB的github地址：https://github.com/AlexeyAB/darknet
 
 使用方法请参考：How to compile on Windows (legacy way)[https://github.com/AlexeyAB/darknet#how-to-compile-on-windows-legacy-way]
@@ -46,15 +54,13 @@ opencv_world3410.lib
 
 本项目要求的cuda版本为10.0，cudnn版本≥7.0，请参考cuda相关的配置教程。
 
-
-
 ## 使用
 
 点击vs2015编译（Build -> Build darknet），生成可执行文件darknet.exe。编译成功后会在**darknet\build\darknet\x64**文件夹下生成可执行文件。
 
 打开cmd窗口，根据AlexAB/darknet主页的使用方法进行使用。
 
-#### How to use on the command line
+### How to use on the command line
 
 将下载好的yolov4.weights放到**darknet\build\darknet\x64**路径下，运行命令：
 
@@ -63,6 +69,28 @@ darknet.exe detector test cfg/coco.data cfg/yolov4.cfg yolov4.weights -thresh 0.
 ```
 
 会提示识别的图片所在路径，直接输入**dog.jpg**即可。
+
+### 训练自定义数据集
+
+#### 训练
+
+1、创建.cfg文件，max_batches一般设置为num_classes\*2000，但至少不小于6000，steps=0.8\*max_batches, 0.9*max_batches；
+
+2、根据数据集创建data/obj.data，data/obj.names；
+
+3、运行命令
+
+darknet.exe detector train data/obj.data yolo-obj.cfg yolov4.conv.137
+
+如果需要train with `-map` flag，运行命令：
+
+darknet.exe detector train data/obj.data yolo-obj.cfg yolov4.conv.137 -map
+
+训练好的参数保存在backup/下。
+
+#### mAP
+
+darknet.exe detector map data/obj.data yolo-obj.cfg backup\yolo-obj_7000.weights
 
 
 
@@ -207,5 +235,5 @@ $(CUDA_PATH)\lib\$(PlatformName);$(CUDNN)\lib\x64;$(cudnn)\lib\x64;
 
 这些打印信息只有在实例化时出现，正常识别过程中不会有，所以不会影响识别速度。
 
-## darknet DLL使用(python)
+
 

@@ -470,7 +470,7 @@ git checkout -- 文件  (注意双横杠和文件之前有空格)
 git checkout -- src/  #撤销文件夹src的修改
 ```
 
-
+还可以使用`git restore <file>`命令撤销修改。
 
 ### commit撤销
 
