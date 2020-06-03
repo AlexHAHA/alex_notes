@@ -78,7 +78,9 @@ darknet.exe detector test cfg/coco.data cfg/yolov4.cfg yolov4.weights -thresh 0.
 
 2、根据数据集创建data/obj.data，data/obj.names；
 
-3、运行命令
+3、将所有.txt labels文件放到images文件目录下
+
+4、运行命令
 
 darknet.exe detector train data/obj.data yolo-obj.cfg yolov4.conv.137
 
