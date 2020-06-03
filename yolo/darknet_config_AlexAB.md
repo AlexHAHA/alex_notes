@@ -237,3 +237,94 @@ $(CUDA_PATH)\lib\$(PlatformName);$(CUDNN)\lib\x64;$(cudnn)\lib\x64;
 
 
 
+### 测试demo
+
+```c++
+#include "yolo_v2_class.hpp"
+
+#include <iostream>
+#include <iomanip>
+#include <string>
+#include <vector>
+#include <queue>
+#include <fstream>
+#include <thread>
+#include <future>
+#include <atomic>
+#include <mutex>         // std::mutex, std::unique_lock
+#include <cmath>
+using namespace std;
+
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>  
+#include <opencv2/highgui/highgui.hpp>  
+using namespace cv;
+
+void hello()
+{
+	cout << "hello darknet" << endl;
+	system("pause");
+}
+
+void opencv_test()
+{  
+	Mat img = imread("dog.jpg");
+	namedWindow("ͼƬ");
+	imshow("ͼƬ", img);
+	waitKey(6000);
+}
+
+/*
+
+ */
+std::vector<std::string> objects_names_from_file(std::string const filename) 
+{
+	std::ifstream file(filename);
+	std::vector<std::string> file_lines;
+	if (!file.is_open()) return file_lines;
+	for (std::string line; getline(file, line);) file_lines.push_back(line);
+	std::cout << "object names loaded \n";
+	return file_lines;
+}
+void show_console_result(std::vector<bbox_t> const result_vec, std::vector<std::string> const obj_names, int frame_id = -1) 
+{
+	if (frame_id >= 0) std::cout << " Frame: " << frame_id << std::endl;
+	for (auto &i : result_vec) {
+		if (obj_names.size() > i.obj_id) std::cout << obj_names[i.obj_id] << " - ";
+		std::cout << "obj_id = " << i.obj_id << ",  x = " << i.x << ", y = " << i.y
+			<< ", w = " << i.w << ", h = " << i.h
+			<< std::setprecision(3) << ", prob = " << i.prob << std::endl;
+	}
+}
+
+void detect_img()
+{
+	std::string names_file   = "data/coco.names";
+	std::string cfg_file     = "cfg/yolov3.cfg";
+	std::string weights_file = "weights/yolov3.weights";
+	Detector detector(cfg_file, weights_file);
+	auto obj_names           = objects_names_from_file(names_file);
+
+	//
+	Mat img = imread("dog.jpg");
+	//det_image = detector.mat_to_image_resize(img);
+	printf(">>> Begin to detect a image\n");
+	std::vector<bbox_t> result_vec = detector.detect(img);
+	show_console_result(result_vec, obj_names);
+	//draw_boxes(mat_img, result_vec, obj_names);
+	printf(">>> Begin to detect a image\n");
+	result_vec = detector.detect(img);
+	show_console_result(result_vec, obj_names);
+
+	system("pause");
+}
+
+
+int main()
+{
+	//opencv_test();
+	detect_img();
+	return 0;
+}
+```
+
