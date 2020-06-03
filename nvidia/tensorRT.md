@@ -8,12 +8,14 @@ TensorRT 之前称为GIE。
 
 ## 安装
 
-
+对于Jetson系列来说，tensorRT是Jetpack的一部分，已经安装好了。
 
 ### 测试
 
 ```
 $ dpkg -l | grep TensorRT
+# 在python3的安装库中查看是否有tensorrt
+$ pip3 list
 ```
 
 
@@ -22,3 +24,14 @@ $ dpkg -l | grep TensorRT
 
 pytorch的模型需要转为ONNX，然后再使用tensorRT对ONNX模型做解析。ONNX（Open Neural Network Exchange ）是微软和Facebook携手开发的开放式神经网络交换工具，也就是说不管用什么框架训练，只要转换为ONNX模型，就可以放在其他框架上面去inference。
 
+## 实例讲解
+
+我们将以https://github.com/QZ-cmd/YOLOv3-TRT-jetson-nano进行讲解
+
+### 环境配置
+
+#### 安装onnx
+
+1、sudo apt-get install protobuf-compiler libprotoc-dev
+
+2、 pip3 install onnx==1.4.1
