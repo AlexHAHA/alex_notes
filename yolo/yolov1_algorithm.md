@@ -8,6 +8,8 @@ Yolo(you only look once)是一种端到端的图像目标识别算法，开创�
 
 <img src="source\yolov1\architecture.png" alt="tensor" style="zoom:80%;" />
 
+<img src="source\yolov1\model_grid.png" alt="tensor" style="zoom:60%;" />
+
 yolo网络的最后输出的是shape=(S,S,B*5+C)的tensor，
 
 <img src="source\yolov1\outtensor.png" alt="tensor" style="zoom:45%;" />
