@@ -120,6 +120,16 @@ git remote add origin https://github.com/AlexHAHA/alex_tutorials.git
 git push -u origin master
 ```
 
+### 多个git管理
+
+如果一台计算机需要关联多个github账号，那么需要生成多个ssh key，在使用命令key生成命令时，你需要重新输入一个文件(最好保存在默认目录下**/c/Users/admin/.ssh/**)用于保存新产生的key，不然会覆盖以前github账号对应的key：
+
+```
+$ ssh-keygen -t rsa -C "boolpi@163.com"
+Generating public/private rsa key pair.
+Enter file in which to save the key (/c/Users/admin/.ssh/id_rsa): /c/Users/admin/.ssh/boolpi-id_rsa
+```
+
 
 
 ## git机制

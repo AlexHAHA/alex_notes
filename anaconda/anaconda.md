@@ -1,3 +1,48 @@
+## pkg安装
+
+### 在线安装
+
+1. 用conda install pkgname即可，pkgname为包名
+
+2. 当找不到包的时候，尝试下面的语句
+
+    conda install -c conda-forge pkgname
+
+3. 依旧找不到的话，用下面的搜索包名，进行最后尝试
+
+    anaconda search -t conda pkgname    找到需要的pkgname全名后，输入下面的指令
+    anaconda show pkgname（全名），会列出channel_url
+    最后根据列出来的url（就是看着像网址的那些）选择相应版本，输入下面的指令进行下载
+    conda install --channel channel_url  pkgname
+
+### 本地安装
+
+1. 从github（或者其他来源）中下载zip
+
+   解压后里面有一个setup.py的文件
+
+   在命令行中进入解压路径，输入python setup.py install
+
+   然后会出现dist文件夹，其中会生成一个.tar.gz类型文件，后续同下种方式
+
+2. 下载.tar.gz类型文件
+
+    根据文件的绝对路径执行命令conda install --use-local pkg
+
+    其中，pkg为绝对路径
+
+### pkgs
+
+anaconda下载的pkg都放在路径`C:\ProgramData\Anaconda3\pkgs`下了，如果在其他conda环境中安装过pkg，那么你应该可以在该文件夹中找到，新建conda环境就不需要重新下载，可以直接通过conda命令安装该路径下已经下载过的pkg。
+
+可以使用如下命令安装`tar.bz2`类型的pkg：
+
+```
+conda install xxx.tar.bz2
+```
+
+
+
 ## conda基础命令
 
 | 命令            | 功能             | 备注 |

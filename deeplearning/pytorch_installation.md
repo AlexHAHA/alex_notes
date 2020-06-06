@@ -38,7 +38,13 @@ UESTC.dream2013
 
 #### 环境变量
 
-一般情况下（win7系统），安装后自动添加环境变量CUDA_PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1，然后再添加其余环境变量：
+一般情况下（win7系统），安装后自动如下添加环境变量：
+
+`CUDA_PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1`
+
+`CUDA_PATH_V10_1=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1`
+
+然后再添加其余环境变量：
 
  CUDA_LIB_PATH = %CUDA_PATH%\lib\x64
  CUDA_BIN_PATH = %CUDA_PATH%\bin
@@ -66,7 +72,9 @@ CUDA_SDK_PATH = C:\ProgramData\NVIDIA Corporation\CUDA Samples\v10.1
 
 将bin所在的目录添加到环境变量 PATH 中即可。
 
+### 多版本cuda
 
+一台计算机可以安装多个版本的cuda而不会相互影响，只需要根据使用的cuda版本修改**环境变量**即可。
 
 ## pytorch安装
 
