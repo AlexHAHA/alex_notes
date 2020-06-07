@@ -122,6 +122,8 @@ git push -u origin master
 
 ### 多个git管理
 
+#### ssh-keygen
+
 如果一台计算机需要关联多个github账号，那么需要生成多个ssh key，在使用命令key生成命令时，你需要重新输入一个文件(最好保存在默认目录下**/c/Users/admin/.ssh/**)用于保存新产生的key，不然会覆盖以前github账号对应的key：
 
 ```
@@ -130,7 +132,60 @@ Generating public/private rsa key pair.
 Enter file in which to save the key (/c/Users/admin/.ssh/id_rsa): /c/Users/admin/.ssh/boolpi-id_rsa
 ```
 
+在GitHub添加SSH keys，并将`id_rsa_boolpi.pub`内的key拷贝进来。
 
+#### config
+
+在.ssh文件夹下，新建config文件，修改如下
+
+```
+# personal
+Host github.com
+HostName github.com
+User AlexHAHA
+IdentityFile ~/.ssh/id_rsa
+
+# team
+# 这里boolpi会在git remote add使用到，用来指定远程仓库对应的id_rsa
+Host boolpi
+HostName github.com
+User BoolPi
+IdentityFile ~/.ssh/id_rsa_boolpi
+```
+
+### git clone
+
+拷贝远程仓库
+
+```
+git clone git@github.com: BoolPi/learngit.git
+```
+
+进入仓库路径，并设置局部的用户名和邮箱
+
+```
+$ git config user.name "BoolPi"
+$ git config user.email "boolpi@163.com"
+```
+
+#### git remote
+
+在仓库项目文件夹，查看远程仓库配置
+
+```
+$ git remote -v
+origin  git@github.com:BoolPi/yolopi.git (fetch)
+origin  git@github.com:BoolPi/yolopi.git (push)
+
+```
+
+默认情况下使用的是`github.com`对应的github账号，通过`config`文件可以知道这个是一个personal账号，如果该仓库属于team，那么你需要重新添加一个remote并对应至team账号
+
+```
+$ git remote add origin2 git@boolpi:boolpi/yolopi.git
+```
+
+然后你就可以正常使用了！
 
 ## git机制
 

@@ -28,6 +28,12 @@ pytorch的模型需要转为ONNX，然后再使用tensorRT对ONNX模型做解析
 
 我们将以https://github.com/QZ-cmd/YOLOv3-TRT-jetson-nano进行讲解
 
+其参考的repos有
+
+https://github.com/Rapternmn/PyTorch-Onnx-Tensorrt
+
+https://github.com/jkjung-avt/tensorrt_demos#yolov3
+
 ### 环境配置
 
 #### 安装onnx
