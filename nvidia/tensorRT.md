@@ -38,6 +38,8 @@ https://github.com/jkjung-avt/tensorrt_demos#yolov3
 
 #### 安装onnx
 
-1、sudo apt-get install protobuf-compiler libprotoc-dev
+```
+$ sudo apt-get install protobuf-compiler libprotoc-dev
+$ pip3 install onnx==1.4.1
+```
 
-2、 pip3 install onnx==1.4.1
