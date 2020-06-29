@@ -116,13 +116,23 @@ cat /usr/local/cuda/include/cudnn.h | grep CUDNN_MAJOR -A 2
 
 
 
-## Darknet
+## Darknet-AlexeyAB
 
 ### 编译
 
 ### Makefile
 
 首先
+
+
+
+### 测试
+
+```
+sudo ./darknet detect cfg/yolov3.cfg yolov3.weights data/dog.jpg
+```
+
+
 
 ### 问题及解决
 

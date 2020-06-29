@@ -10,13 +10,24 @@ TensorRT 之前称为GIE。
 
 对于Jetson系列来说，tensorRT是Jetpack的一部分，已经安装好了。
 
-### 测试
+### 查看版本
 
 ```
 $ dpkg -l | grep TensorRT
 # 在python3的安装库中查看是否有tensorrt
 $ pip3 list
 ```
+
+### 官方例程
+
+tensorRT的例程路径为`/usr/src/tensorrt`，其中bin, data, python, samples四个文件夹，进入samples文件夹后运行make，会在bin文件夹生成可运行的程序，可以使用如下命令测试：
+
+```
+$ cd bin
+$ sudo ./sample_mnist
+```
+
+
 
 
 
@@ -25,6 +36,16 @@ $ pip3 list
 pytorch的模型需要转为ONNX，然后再使用tensorRT对ONNX模型做解析。ONNX（Open Neural Network Exchange ）是微软和Facebook携手开发的开放式神经网络交换工具，也就是说不管用什么框架训练，只要转换为ONNX模型，就可以放在其他框架上面去inference。
 
 ## 实例讲解
+
+### repo尝试
+
+| auther                                                       | requirements                                                 | manifold2-G                      |      |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | -------------------------------- | ---- |
+| [CaoWGG](https://github.com/CaoWGG)/**[TensorRT-YOLOv4](https://github.com/CaoWGG/TensorRT-YOLOv4)** | ubuntu 1604 <br/>TensorRT 5.0 <br/>cuda 9.0 <br/>python3 <br/>onnx=1.4.1 | failed<br>tensorRT not satisfied |      |
+|                                                              |                                                              |                                  |      |
+|                                                              |                                                              |                                  |      |
+
+
 
 我们将以https://github.com/QZ-cmd/YOLOv3-TRT-jetson-nano进行讲解
 
