@@ -92,11 +92,13 @@ deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ xenial-backports main restricte
 
 #### CUDA
 
-安装路径为`/usr/local/cuda`
+安装路径为`/usr/local/cuda-9.0`，但你也会在`/usr/local`找到文件夹`cuda`，其实这个是前面cuda路径的快捷方式！
 
 查看版本命令：
 
 ```
+cat /usr/local/cuda/version.txt
+#or
 nvcc -V
 ```
 
@@ -111,3 +113,37 @@ cat /usr/local/cuda/include/cudnn.h | grep CUDNN_MAJOR -A 2
 ```
 
 根据三行#define语句后的数字进行关联即可得到，当前版本是7.4.2
+
+
+
+## Darknet
+
+### 编译
+
+### Makefile
+
+首先
+
+### 问题及解决
+
+#### 问题一
+
+描述：
+
+/bin/sh: 1: nvcc: not found
+
+解决方法：
+
+进入darknet目录，编辑Makefile，修改NVCC路径
+
+```
+NVCC=nvcc
+#修改为
+NVCC=/usr/local/cuda-9.0/bin/nvcc
+```
+
+
+
+### 问题二：
+
+https://blog.csdn.net/slzlincent/article/details/86568148
