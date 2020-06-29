@@ -114,6 +114,16 @@ cat /usr/local/cuda/include/cudnn.h | grep CUDNN_MAJOR -A 2
 
 根据三行#define语句后的数字进行关联即可得到，当前版本是7.4.2
 
+## pycuda
+
+安装pycuda时，可能会弹出`出现找不到"cuda.h"和curand库`的错误，可以通过如下方式安装：
+
+```
+export CPATH=$CPATH:/usr/local/cuda/targets/aarch64-linux/include
+export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/cuda-10.0/targets/aarch64-linux/lib/
+pip3 install 'pycuda>=2017.1.1'
+```
+
 
 
 ## Darknet-AlexeyAB

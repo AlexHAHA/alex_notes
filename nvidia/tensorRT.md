@@ -27,7 +27,14 @@ $ cd bin
 $ sudo ./sample_mnist
 ```
 
+## 环境配置
 
+#### 安装onnx
+
+```
+$ sudo apt-get install protobuf-compiler libprotoc-dev
+$ pip3 install onnx==1.4.1
+```
 
 
 
@@ -45,22 +52,21 @@ pytorch的模型需要转为ONNX，然后再使用tensorRT对ONNX模型做解析
 |                                                              |                                                              |                                  |      |
 |                                                              |                                                              |                                  |      |
 
-
+### repo-CaoWGG
 
 我们将以https://github.com/QZ-cmd/YOLOv3-TRT-jetson-nano进行讲解
+
+**注意**：
+
+jetson的tensorrt是由jetpack安装，不像x86平台需要单独安装(安装好后的路径一般为/usr/local/TensorRT-x.x.x.x)，在jetson系列平台，没有这样的安装路径，所以在`CMakeLists.txt`中不需要指定tensorrt的路径，注释掉下面这行：
+
+```
+set(TENSORRT_ROOT /usr/local/TensorRT-x.x.x.x)
+```
 
 其参考的repos有
 
 https://github.com/Rapternmn/PyTorch-Onnx-Tensorrt
 
 https://github.com/jkjung-avt/tensorrt_demos#yolov3
-
-### 环境配置
-
-#### 安装onnx
-
-```
-$ sudo apt-get install protobuf-compiler libprotoc-dev
-$ pip3 install onnx==1.4.1
-```
 
