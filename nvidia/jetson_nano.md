@@ -273,6 +273,50 @@ sudo apt-get install libcanberra-gtk-module
 
 You are using the built-in version of OpenCV. In the case of nvidia systems, the OpenCV version installed by default has not support for GStreamer or FFMpeg, so, you have to compile and install your own version of OpenCV with those capabilities (and dependencies) if you need to open camera streams.
 
+### 使用问题
+
+#### 无法找到opencv
+
+```
+$ pkg-config opencv --libs
+# 出现如下错误
+Package opencv was not found in the pkg-config search path.
+Perhaps you should add the directory containing `opencv.pc'
+to the PKG_CONFIG_PATH environment variable
+No package 'opencv' found
+```
+
+在opencv编译安装时：
+
+```
+cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr/local -D OPENCV_GENERATE_PKGCONFIG=ON ..
+```
+
+最后一项很关键，会生成`opencv.pc`，安装后，在/usr/local/lib/pkgconfig文件夹下会生成opencv4.pc文件，将其克隆到/usr/lib/pkgconfig。
+
+#### 测试
+
+在**opencv-4.1.0/samples/cpp/example_cmake**中执行如下：
+
+```
+$ cmake .
+$ make
+$ sudo ./opencv_example
+```
+
+### 卸载
+
+进入opencv编译时建立的build文件夹后：
+
+```
+cd /home/***/opencv/build
+sudo make uninstall
+cd  ..
+sudo rm -r build
+```
+
+
+
 ## anaconda
 
 由于jetson nano是arm架构，可以选择去下载archiconda，地址如下**https://github.com/Archiconda/build-tools/releases**，选择下载**[Archiconda3-0.2.3-Linux-aarch64.sh](https://github.com/Archiconda/build-tools/releases/download/0.2.3/Archiconda3-0.2.3-Linux-aarch64.sh)**，然后在终端运行：

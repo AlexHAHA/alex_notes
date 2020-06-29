@@ -34,15 +34,19 @@ $$
 
 <img src="source\yolov1\model_grid.png" alt="tensor" style="zoom:50%;" />
 
+yolo模型将目标检测当做一个回归问题来解决，预测结果是一个**SxSx(B*5+C)**的tensor，对于PASCAL VOC数据集来说，S=7，B=2，并且该数据集类别C=20，故最终的预测是7x7x30的tensor。
+
+<img src="source\yolov1\outtensor.png" alt="tensor" style="zoom:45%;" />
+
 ### Network Design
+
+对于图像处理的问题，其深度学习模型基本可分为两个部分，前面部分是卷积神经网络用于提取图像特征，后半部分是特征的应用处理。对于yolo来说也是一样的，模型前几层是卷积层，作者使用的类似于GoogLeNet，最后是两层全连接层用于分类。
 
 <img src="source\yolov1\architecture.png" alt="tensor" style="zoom:80%;" />
 
+这种模型的设计思想很难有变化，在指导思想下，我们也可以使用AlexNet或ResNet的特征提取部分，仅仅修改或添加最后的全连接层，这样没有变化的网络层就可以完全采用在ImageNet数据集训练的网络参数，然后在yolo检测任务数据集(VOC)上继续训练修改或添加的网络层即可！
 
-
-yolo网络的最后输出的是shape=(S,S,B*5+C)的tensor，
-
-<img src="source\yolov1\outtensor.png" alt="tensor" style="zoom:45%;" />
+具体的实现过程可以参考：https://github.com/xiongzihua/pytorch-YOLO-v1。
 
 ## Training
 
