@@ -127,7 +127,7 @@ workspace_folder/          -- WORKSPACE
   |--bin/
   |--etc/
   |--include/
-  |--lib/
+  |--lib/                   -- 各个package的编译结果
   |--share/
   |--.catkin
   |--env.bash
@@ -290,7 +290,7 @@ message_runtime
 
 #### Publisher实现
 
-在package文件夹中新建一个Person_publisher.cpp文件。
+在package文件夹中新建一个person_publisher.cpp文件，在头部包含头文件`#include pkg_name/Person.h`。
 
 1、实例化一个publisher
 
@@ -302,47 +302,207 @@ ros::Publisher person_info_pub =
                n.advertise<pkg_name::Person>("/person_info", 10);
 ```
 
-
-
-详细内容如下：
+2、实例化一个msg
 
 ```
-#include <ros/ros.h>
-#include "learning_topic/Person.h"
-int main(int argc, char **argv)
+pkg_name::Person person_msg;
+person_msg.name = "Tom";
+person_msg.age = 18;
+person_msg.sex = pkg_name::Person::male;
+```
+
+3、发布消息
+
+```
+person_info_pub.publish(person_msg)
+```
+
+4、配置编译规则
+
+在CMakeLists.txt添加如下
+
+```
+add_executable(person_publisher src/person_publisher.cpp)
+target_link_libraries(person_publisher ${catkin_LIBRARIES})
+add_dependencies(person_publisher ${PROJECT_NAME}_generate_messages_cpp)
+```
+
+其中**person_publisher**即为生成的节点名字（可执行程序）。
+
+#### Subscriber实现
+
+在package文件夹中新建一个person_subscriber.cpp文件，在头部包含头文件`#include pkg_name/Person.h`。
+
+1、定义回调处理函数
+
+```
+void callback(const pkg_name::Person::ConstPtr& msg)
 {
-    // ROS节点初始化
-    ros::init(argc, argv, "person_publisher");
-    // 创建节点句柄
-    ros::NodeHandle n;
-
-    // 创建一个Publisher，发布名为/person_info的topic，消息类型为learning_topic::Person，队列长度10
-    ros::Publisher person_info_pub = n.advertise<learning_topic::Person>("/person_info", 10);
-
-    // 设置循环的频率
-    ros::Rate loop_rate(1);
-    int count = 0;
-    while (ros::ok())
-    {
-        // 初始化learning_topic::Person类型的消息
-    	learning_topic::Person person_msg;
-		person_msg.name = "Tom";
-		person_msg.age  = 18;
-		person_msg.sex  = learning_topic::Person::male;
-        // 发布消息
-		person_info_pub.publish(person_msg);
-       	ROS_INFO("Publish Person Info: name:%s  age:%d  sex:%d", 
-				  person_msg.name.c_str(), person_msg.age, person_msg.sex);
-        // 按照循环频率延时
-        loop_rate.sleep();
-    }
-    return 0;
+	ROS_INFO("Person Info: name %s age %d sex %d", msg->name.c_str(),
+	                                               msg->age, msg->sex);
 }
 ```
 
+2、实例化subscriber，注册回调函数
 
+```
+ros::Subscriber person_info_sub = n.subscriber("/person_info", 10, callback)
+```
 
-#### subscriber实现
+3、配置编译规则
+
+在CMakeLists.txt添加如下
+
+```
+add_executable(person_subscriber src/person_subscriber.cpp)
+target_link_libraries(person_subscriber ${catkin_LIBRARIES})
+add_dependencies(person_subscriber ${PROJECT_NAME}_generate_messages_cpp)
+```
+
+其中**person_subscriber**即为生成的节点名字（可执行程序）。
+
+#### 测试
+
+```
+$roscore
+$rosrun pkg_name person_subscriber
+$rosrun pkg_name person_publisher
+```
+
+## 服务service
+
+service是服务器端(server)和客户端(client)之间进行通讯的消息机制，在通信过程中由client发起request，server收到请求消息后进行处理并返回response。
+
+### 示例
+
+#### 自定义服务数据
+
+1、定义srv文件
+
+在package文件夹的**srv**文件夹中新建**Person.srv**文件，并添加如下
+
+```
+string name
+uint8 sex
+uint8 age
+
+uint8 unknown=0
+uint8 male=1
+uint8 female=0
+--- 
+string result
+```
+
+在srv文件中，使用`---`用于分割request和response。
+
+2、在package.xml中添加功能包依赖
+
+```
+<build_depend>message_generation</build_depend>
+<exec_depend>message_runtime</exec_depend>
+```
+
+3、在CMakeLists.txt添加编译选项
+
+```
+find_package(
+message_generation
+)
+
+add_service_files(
+FILES
+Person.srv
+)
+generate_messages(DEPENDENCIES std_msgs)
+
+catkin_package(
+message_runtime
+)
+```
+
+4、进行catkin_make编译生成语言相关文件
+
+编译完成后，可在工作空间**devel/include**文件夹下找到与package同名的文件夹，并且有**Person.h**文件。
+
+#### 客户端client
+
+在package文件夹中新建一个person_client.cpp文件，在头部包含头文件`#include pkg_name/Person.h`。
+
+1、实例化一个ServiceClient
+
+```
+// 其中/show_person是service名子
+ros::service::waitForService("/show_person")
+//pkg_name::Person为服务数据类型
+ros::ServiceClient person_client = n.serviceClient<pkg_name::Person>("/show_person")
+```
+
+2、初始化服务请求数据
+
+```
+//Person就是文件Person.srv的文件名！
+pkg_name::Person srv;
+srv.request.name = "Tom";
+srv.request.age = 18;
+srv.request.sex = pkg_name::Person::Request::male;
+```
+
+3、访问服务
+
+```
+person_client.call(srv);
+```
+
+4、服务响应结果
+
+```
+ROS_INFO("Show person result: %s", srv.reponse.result.c_str());
+```
+
+5、配置编译规则
+
+在CMakeLists.txt添加如下
+
+```
+add_executable(person_client src/person_client.cpp)
+target_link_libraries(person_client ${catkin_LIBRARIES})
+add_dependencies(person_client ${PROJECT_NAME}_gencpp)
+```
+
+其中**person_server**即为生成的节点名字（可执行程序）。
+
+#### 服务端server
+
+在package文件夹中新建一个person_server.cpp文件，在头部包含头文件`#include pkg_name/Person.h`。
+
+1、定义回调处理函数
+
+```
+bool callback(pkg_name::Person::Request &req, pkg_name::Person::Response &res)
+{
+    ROS_INFO("Person: name %s age %d sex %d", req.name.c_str(), req.age, req.sex);
+    res.result = "OK";
+    return true;
+}
+```
+
+2、创建server，注册回调函数
+
+```
+ros::ServiceServer person_server = n.advertiseService("/show_person", callback);
+```
+
+3、配置编译规则
+
+在CMakeLists.txt添加如下
+
+```
+add_executable(person_server src/person_server.cpp)
+target_link_libraries(person_server ${catkin_LIBRARIES})
+add_dependencies(person_server ${PROJECT_NAME}_gencpp)
+```
+
+其中**person_server**即为生成的节点名字（可执行程序）。
 
 
 
