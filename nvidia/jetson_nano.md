@@ -117,7 +117,7 @@ python3
 >> cv2.__version__
 ```
 
-### 安装方式一（推荐，且成功）：
+### 安装方式一：源码编译
 
 1、安装必备工具
 
@@ -202,6 +202,8 @@ make -j3
 ```
 sudo make install
 ```
+
+安装后，在/usr/local/lib/pkgconfig文件夹下会生成opencv4.pc文件，将其克隆到/usr/lib/pkgconfig。
 
 ### 错误及解决
 
@@ -295,7 +297,7 @@ cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr/local -D OPENCV_G
 
 最后一项很关键，会生成`opencv.pc`，安装后，在/usr/local/lib/pkgconfig文件夹下会生成opencv4.pc文件，将其克隆到/usr/lib/pkgconfig。
 
-#### 测试
+### 测试
 
 在**opencv-4.1.0/samples/cpp/example_cmake**中执行如下：
 
@@ -304,6 +306,8 @@ $ cmake .
 $ make
 $ sudo ./opencv_example
 ```
+
+注意，如果是在`opencv-4.1.0/samples`中执行编译，这所有子文件夹内的都将依次编译，比较耗费时间。
 
 ### 卸载
 
