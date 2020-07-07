@@ -104,6 +104,13 @@ ROS提供了一系列的命令供用户使用，而且可以很方便的使用`T
 | rosmsg     | $ rosmsg show *msg_name*                  | 查看msg具体信息                                         |
 | rosservice | $ rosservice list                         | 查看当前service列表                                     |
 |            | $ rosservice call *service_name*  *param* | 调用service                                             |
+| rosparam   | $ rosparam list                           | 查看参数列表                                            |
+|            | $ rosparam get *param_name*               | 获取参数                                                |
+|            | $ rosparam set *param_name* *value*       | 设置参数                                                |
+|            | $ rosparam dump *yaml_file*               |                                                         |
+|            | $ rosparam load *yaml_file*               |                                                         |
+
+
 
 ### 工作空间Workspace
 
@@ -243,6 +250,10 @@ target_link_libraries(velocity_publisher ${catkin_LIBRARIES})
 
 ### 话题基本使用示例
 
+我们将实现如下图所示的话题通信，首先在工作空间下新建一个package命名为**learning_topic**，也即在/catkin_ws/src下创建了一个learning_topic文件夹。
+
+<img src="source\topic_example.PNG" alt="topic_example.PNG" style="zoom:80%;" />
+
 #### 定义话题消息
 
 我们将以两个节点进行话题通信为例，说明自定义msg的步骤，这里话题通信的msg是关于Person的信息。
@@ -290,7 +301,7 @@ message_runtime
 
 #### Publisher实现
 
-在package文件夹中新建一个person_publisher.cpp文件，在头部包含头文件`#include pkg_name/Person.h`。
+在package文件夹中新建一个person_publisher.cpp文件，在头部包含头文件`#include pkg_name/Person.h`，注意pkg_name即learning_topic。
 
 1、实例化一个publisher
 
@@ -331,7 +342,7 @@ add_dependencies(person_publisher ${PROJECT_NAME}_generate_messages_cpp)
 
 #### Subscriber实现
 
-在package文件夹中新建一个person_subscriber.cpp文件，在头部包含头文件`#include pkg_name/Person.h`。
+在package文件夹中新建一个person_subscriber.cpp文件，在头部包含头文件`#include pkg_name/Person.h`，注意pkg_name即learning_topic。
 
 1、定义回调处理函数
 
@@ -373,13 +384,17 @@ $rosrun pkg_name person_publisher
 
 service是服务器端(server)和客户端(client)之间进行通讯的消息机制，在通信过程中由client发起request，server收到请求消息后进行处理并返回response。
 
-### 示例
+### 服务基本使用示例
+
+我们将实现如下图所示的服务通信，首先在工作空间下新建一个package命名为**learning_service**，也即在/catkin_ws/src下创建了一个learning_topic文件夹。
+
+<img src="source\service_example.PNG" style="zoom:80%;" />
 
 #### 自定义服务数据
 
 1、定义srv文件
 
-在package文件夹的**srv**文件夹中新建**Person.srv**文件，并添加如下
+在package文件夹的**srv**文件夹中新建**Person.srv**文件，并添加如下：
 
 ```
 string name
@@ -393,7 +408,7 @@ uint8 female=0
 string result
 ```
 
-在srv文件中，使用`---`用于分割request和response。
+在srv文件中，使用`---`用于分割request和response，Person.srv文件就规定了一个消息的数据结构。
 
 2、在package.xml中添加功能包依赖
 
@@ -453,6 +468,8 @@ srv.request.sex = pkg_name::Person::Request::male;
 person_client.call(srv);
 ```
 
+**call**方法是一个阻塞函数，发送请求后一直等待响应结果。
+
 4、服务响应结果
 
 ```
@@ -504,7 +521,117 @@ add_dependencies(person_server ${PROJECT_NAME}_gencpp)
 
 其中**person_server**即为生成的节点名字（可执行程序）。
 
+## rosparam
 
+在大型编程中可能会涉及到很多参数配置，在ROS中可以将这些参数放到一个YAML文件，运行时加载至rosmaster供所有节点访问。
+
+### 参数基本使用示例
+
+我们首先在工作空间下新建一个package命名为**learning_parameter**，也即在/catkin_ws/src下创建了一个learning_parameter文件夹。
+
+我们可以通过如下C++代码来操作param的读取和设置。
+
+```
+int red, green, blue;
+// 读取背景颜色参数
+ros::param::get("/background_r", red);
+ros::param::get("/background_g", green);
+ros::param::get("/background_b", blue);
+ROS_INFO("Get Backgroud Color[%d, %d, %d]", red, green, blue);
+// 设置背景颜色参数
+ros::param::set("/background_r", 255);
+ros::param::set("/background_g", 255);
+ros::param::set("/background_b", 255);
+```
+
+## roslaunch
+
+ROS在启动时需要手动打开很多个终端，并且需要依次输入ros命令，非常不方便。可以通过roslaunch实现ROS的快速启动和配置。
+
+我们可以在package/launch文件夹建立**.launch**文件：通过XML文件实现多节点的配置和启动（可自动启动ROS Master）。
+
+参考文档：
+
+http://wiki.ros.org/roslaunch/XML
+
+### launch启动
+
+启动launch文件的语法如下：
+
+`roslaunch pkg_name file.launch`
+
+- pkg_name为功能包名
+- file.launch为launch文件名
+
+
+
+### launch文件语法
+
+launch文件的根元素都是采用<launch>标签定义。
+
+#### 启动节点
+
+启动节点的代码格式为：`<node pkg="pkg_name" type="executable_name" name="node_name"/>`。其中：
+
+- pkg：节点所在的功能包(package)名称
+- type：节点的可执行文件名称
+- name：节点运行时的名称
+- output、respawn、required、ns、args
+
+例如：
+
+```
+<launch>
+    <node pkg="turtlesim" type="turtlesim_node" name="sim1" output="screen" />
+    <node pkg="turtlesim" type="turtlesim_node" name="sim2" output="screen" />
+</launch>
+```
+
+#### 设置ROS参数
+
+设置ROS系统运行中的参数，存储在参数服务器中。代码格式为：
+
+`<param name="output_frame" value="odom"/>`
+
+- name：参数名
+- value：参数值
+
+加载参数文件的多个参数代码格式为：
+
+`<rosparam file="params.yaml" command="load" ns="params" />`
+
+#### 设置launch内部参数
+
+launch内部参数顾名思义就是只能在launch文件内部使用的参数，代码格式为：
+
+`<arg name="arg_name" default=“arg_value" />`
+
+- name：参数名
+- value：参数值
+
+调用方式为如下：
+
+```
+<param name="foo" value="$(arg arg_name)" />
+<node name="node" pkg="package" type="type" args="$(arg arg_name)" />
+```
+
+#### 重映射remap
+
+重映射ROS计算图资源的名字，代码格式如下：
+
+`<remap from="/turtlebot/cmd_vel" to="/cmd_vel" />`
+
+- from：原命名
+- to：映射之后的命名
+
+#### 嵌套include
+
+包含其他launch文件，类似C语言的头文件包含，代码格式如下：
+
+`<include file="$(dirname)/other.launch" />`
+
+- file：包含的其他launch文件路径
 
 ## rostest
 
