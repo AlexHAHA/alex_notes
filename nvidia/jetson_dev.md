@@ -82,13 +82,13 @@ deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ xenial-backports main restricte
 
 当前DJI官方给的镜像包含的软件版本如下：
 
-| 软件版本     | 备注 |
-| ------------ | ---- |
-| Jetpack 3.3  |      |
-| Ubuntu 16.04 |      |
-| CUDA 9.0     |      |
-| Opencv 3.3   |      |
-| ROS          |      |
+| 软件版本     | 备注    |
+| ------------ | ------- |
+| Jetpack 3.3  |         |
+| Ubuntu 16.04 |         |
+| CUDA 9.0     |         |
+| Opencv 3.3.1 | ROS自带 |
+| ROS          |         |
 
 #### CUDA
 
@@ -126,44 +126,5 @@ pip3 install 'pycuda>=2017.1.1'
 
 
 
-## Darknet-AlexeyAB
-
-### 编译
-
-### Makefile
-
-首先
 
 
-
-### 测试
-
-```
-sudo ./darknet detect cfg/yolov3.cfg yolov3.weights data/dog.jpg
-```
-
-
-
-### 问题及解决
-
-#### 问题一
-
-描述：
-
-/bin/sh: 1: nvcc: not found
-
-解决方法：
-
-进入darknet目录，编辑Makefile，修改NVCC路径
-
-```
-NVCC=nvcc
-#修改为
-NVCC=/usr/local/cuda-9.0/bin/nvcc
-```
-
-
-
-### 问题二：
-
-https://blog.csdn.net/slzlincent/article/details/86568148

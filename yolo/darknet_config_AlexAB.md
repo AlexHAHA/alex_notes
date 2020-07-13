@@ -10,13 +10,15 @@ AlexAB的github地址：https://github.com/AlexeyAB/darknet
 
 使用方法请参考：How to compile on Windows (legacy way)[https://github.com/AlexeyAB/darknet#how-to-compile-on-windows-legacy-way]
 
-## 配置
+## Windows环境下的配置和使用
+
+### 配置
 
 开发环境的配置以使用vs2015开发环境为例进行说明。
 
 打开vs项目`build\darknet\darknet.slnset`，并设置为**x64** and **Release**。
 
-### opencv配置
+#### opencv配置
 
 本项目使用的opencv版本≥2.4。
 
@@ -50,17 +52,17 @@ opencv_world3410.lib
 
 4）将opencv文件夹**C:\opencv_3.0\build\x64\vc15\bin**的文件`opencv_ffmpeg3410_64.dll`与`opencv_world3410.dll`放入**darknet\build\darknet\x64**下。
 
-### cuda配置
+#### cuda配置
 
 本项目要求的cuda版本为10.0，cudnn版本≥7.0，请参考cuda相关的配置教程。
 
-## 使用
+### 使用
 
 点击vs2015编译（Build -> Build darknet），生成可执行文件darknet.exe。编译成功后会在**darknet\build\darknet\x64**文件夹下生成可执行文件。
 
 打开cmd窗口，根据AlexAB/darknet主页的使用方法进行使用。
 
-### How to use on the command line
+#### How to use on the command line
 
 将下载好的yolov4.weights放到**darknet\build\darknet\x64**路径下，运行命令：
 
@@ -70,9 +72,9 @@ darknet.exe detector test cfg/coco.data cfg/yolov4.cfg yolov4.weights -thresh 0.
 
 会提示识别的图片所在路径，直接输入**dog.jpg**即可。
 
-### 训练自定义数据集
+#### 训练自定义数据集
 
-#### 训练
+##### 训练
 
 1、创建.cfg文件，max_batches一般设置为num_classes\*2000，但至少不小于6000，steps=0.8\*max_batches, 0.9*max_batches；
 
@@ -80,9 +82,12 @@ darknet.exe detector test cfg/coco.data cfg/yolov4.cfg yolov4.weights -thresh 0.
 
 3、将所有.txt labels文件放到images文件目录下
 
-4、运行命令
+4、开始训练，运行命令
 
+```python
+#yolov4
 darknet.exe detector train data/obj.data yolo-obj.cfg yolov4.conv.137
+```
 
 如果需要train with `-map` flag，运行命令：
 
@@ -90,13 +95,13 @@ darknet.exe detector train data/obj.data yolo-obj.cfg yolov4.conv.137 -map
 
 训练好的参数保存在backup/下。
 
-#### mAP
+##### mAP
 
 darknet.exe detector map data/obj.data yolo-obj.cfg backup\yolo-obj_7000.weights
 
 
 
-## DLL编译与使用
+### DLL编译与使用
 
 根据项目介绍，如果你希望在自己的c++工程下使用darknet，可以通过将最主要的功能部分编译为DLL，非常符合软件工程开发流程规范，只需要知道DLL提供的功能接口函数即可调用。
 
@@ -130,11 +135,11 @@ public:
 
 如何你不太明白如何使用这些函数，可以参考文件[yolo_console_dll.cpp](https://github.com/AlexeyAB/darknet/blob/master/src/yolo_console_dll.cpp)。
 
-### darknet DLL生成
+#### darknet DLL生成
 
 打开工程**darknet\build\darknet\yolo_console_dll.sln**，配置为release和x64，
 
-### opencv配置
+#### opencv配置
 
 如果需要使用opencv，那么需要进行如下操作步骤：
 
@@ -150,13 +155,13 @@ C:\opencv_3.0\build\include\opencv2
 
 Note:一定注意，如果希望在用户自定义的工程中使用DLL，那么也要如此配置。
 
-## darknet DLL 使用(C++)
+### darknet DLL 使用(C++)
 
 用户可以新建一个c++工程命名为**project_darknet**，需要进行如下设置
 
-### 用户工程环境配置
+#### 用户工程环境配置
 
-#### darknet文件迁移
+##### darknet文件迁移
 
 将如下文件，放到工程目录下（与用户代码文件同目录）
 
@@ -169,7 +174,7 @@ darknet.h
 
 由于需要导入DLL，故需要配置下链接器。即在工程属性界面下，链接器->输入->附加依赖项，添加**yolo_cpp_dll.lib**。
 
-#### 3rdpart文件迁移
+##### 3rdpart文件迁移
 
 1）将darknet/3rdparty文件夹拷贝至用户工程目录下；并且拷贝其中的3rdparty\pthreads\bin\pthreadVC2.dll文件到工程目录下**project_darknet\project_darknet**。
 
@@ -181,7 +186,7 @@ darknet.h
 
 3】链接器 > 输入 > 附加依赖项，添加：pthreadVC2.lib
 
-#### opencv
+##### opencv
 
 1）预定义宏变量**OPENCV**，即在工程属性界面下，`C/C++ > 预处理器 > 预处理器定义`中添加**OPENCV**。
 
@@ -199,7 +204,7 @@ C:\opencv_3.0\build\x64\vc15\lib。
 
 4）配置链接器，即在工程属性界面下，`链接器->输入->附加依赖项`，添加**opencv_world3410.lib**。并且将文件C:\opencv_3.0\build\binopencv_ffmpeg3410_64.dll与C:\opencv_3.0\build\x64\vc15\binopencv_world3410.dll拷贝至工程目录下。
 
-#### cuda配置
+##### cuda配置
 
 工程属性配置
 
@@ -219,7 +224,7 @@ cublas.lib;curand.lib;cudart.lib;cuda.lib
 $(CUDA_PATH)\lib\$(PlatformName);$(CUDNN)\lib\x64;$(cudnn)\lib\x64;
 ```
 
-#### 添加宏
+##### 添加宏
 
 右击打开项目属性管理器 -> C/C++ -> 预处理器 -> 添加宏定义：`_CRT_SECURE_NO_DEPRECATE`，若该宏定义没有，会出现如下报错：
 
@@ -229,9 +234,9 @@ $(CUDA_PATH)\lib\$(PlatformName);$(CUDNN)\lib\x64;$(cudnn)\lib\x64;
 
 ```
 
-### 编码相关
+#### 编码相关
 
-#### 类初始化时数据输出打印
+##### 类初始化时数据输出打印
 
 文件parser.c中的函数parse_net_options()，会打印模型和计算机相关的参数。
 
@@ -239,7 +244,7 @@ $(CUDA_PATH)\lib\$(PlatformName);$(CUDNN)\lib\x64;$(cudnn)\lib\x64;
 
 
 
-### 测试demo
+#### 测试demo
 
 ```c++
 #include "yolo_v2_class.hpp"
@@ -330,3 +335,56 @@ int main()
 }
 ```
 
+
+
+### Ubuntu环境下的配置和使用
+
+#### 编译方式一：Makefile
+
+1、首先根据需要修改一下Makefile
+
+```
+GPU=1           # 使用GPU时置1
+CUDNN=1         # 使用GPU时置1
+CUDNN_HALF=0
+OPENCV=1        # 使用Opencv时置1
+AVX=0
+OPENMP=0
+LIBSO=0         # 需要编译生成.so时置1
+
+# 根据显卡的计算算力调整，这里TX2的算力对应数字为62
+ARCH= -gencode arch=compute_62,code=[sm_62,compute_62] 
+
+```
+
+2、运行`make`命令进行编译
+
+#### 测试
+
+```
+sudo ./darknet detect cfg/yolov3.cfg yolov3.weights data/dog.jpg
+```
+
+#### 问题及解决
+
+##### 问题一
+
+描述：
+
+/bin/sh: 1: nvcc: not found
+
+解决方法：
+
+进入darknet目录，编辑Makefile，修改NVCC路径
+
+```
+NVCC=nvcc
+#修改为
+NVCC=/usr/local/cuda-9.0/bin/nvcc
+```
+
+
+
+#### 问题二：
+
+https://blog.csdn.net/slzlincent/article/details/86568148
