@@ -22,7 +22,6 @@ Ref: http://wiki.ros.org/kinetic/Installation/Ubuntu
 ```
 sudo apt-get update
 sudo apt-get install ros-kinetic-desktop-full
-
 ```
 
 如果已经安装好ROS，但cmake卸载了，那么很多ROS包也会被卸载，需要从**1.4**重新执行安装过程。
@@ -109,6 +108,8 @@ ROS提供了一系列的命令供用户使用，而且可以很方便的使用`T
 |            | $ rosparam set *param_name* *value*       | 设置参数                                                |
 |            | $ rosparam dump *yaml_file*               |                                                         |
 |            | $ rosparam load *yaml_file*               |                                                         |
+| rospack    | $rospack list                             | 查看当前所有package及其路径                             |
+|            |                                           |                                                         |
 
 
 
@@ -632,6 +633,65 @@ launch内部参数顾名思义就是只能在launch文件内部使用的参数�
 `<include file="$(dirname)/other.launch" />`
 
 - file：包含的其他launch文件路径
+
+### launch文件参数传递
+
+节点中如果使用launch文件中的参数，可以有三种方式：
+
+1、ros::param::get()
+
+2、nh.getParam()
+
+3、nh.param<>()
+
+### 例程
+
+#### 例程1
+
+1、文件`alex.launch`
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+  <arg name="launch_prefix" default=""/>
+  <param name="video_type" value="camera" />
+
+  <node pkg="alex_ros" type="alex_node" name="alex_node" output="screen" launch-prefix="$(arg launch_prefix)">
+    <param name="video_topic" value="/camera/rgb/image_raw" />
+    <param name="video_address"  value="/home/dji/Desktop/videos/lby_xiongmaota1.mp4" />
+  </node>
+</launch>
+
+```
+
+launch文件定义的参数会加载至ROS参数服务器，以上launch文件运行后，你可以使用`rosparam list`查看增加了如下参数：
+
+```
+/video_type
+/alex_node/video_topic
+/alex_node/video_address
+```
+
+2、文件`alex_node.cpp`
+
+```c++
+int main(int argc, char **argv)
+{
+	ros::init(argc, argv, "image_publisher");
+    //添加参数"~"指定私有命名空间：nh的namespace为/alex_node
+    ros::NodeHandle nh("~");
+    std::string video_type;
+    std::string video_topic;
+    std::string video_addr;
+    
+    nh.getParam("/video_type", video_type);
+    nh.param<std::string>("video_topic", video_topic, std::string("/camera/rgb/image_raw"));
+    nh.param<std::string>("video_address", video_addr, std::string("/home/dji/Desktop/videos/mAP40.mp4"));
+
+}
+```
+
+
 
 ## rostest
 

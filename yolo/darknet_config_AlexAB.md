@@ -72,33 +72,6 @@ darknet.exe detector test cfg/coco.data cfg/yolov4.cfg yolov4.weights -thresh 0.
 
 会提示识别的图片所在路径，直接输入**dog.jpg**即可。
 
-#### 训练自定义数据集
-
-##### 训练
-
-1、创建.cfg文件，max_batches一般设置为num_classes\*2000，但至少不小于6000，steps=0.8\*max_batches, 0.9*max_batches；
-
-2、根据数据集创建data/obj.data，data/obj.names；
-
-3、将所有.txt labels文件放到images文件目录下
-
-4、开始训练，运行命令
-
-```python
-#yolov4
-darknet.exe detector train data/obj.data yolo-obj.cfg yolov4.conv.137
-```
-
-如果需要train with `-map` flag，运行命令：
-
-darknet.exe detector train data/obj.data yolo-obj.cfg yolov4.conv.137 -map
-
-训练好的参数保存在backup/下。
-
-##### mAP
-
-darknet.exe detector map data/obj.data yolo-obj.cfg backup\yolo-obj_7000.weights
-
 
 
 ### DLL编译与使用
@@ -359,10 +332,170 @@ ARCH= -gencode arch=compute_62,code=[sm_62,compute_62]
 
 2、运行`make`命令进行编译
 
-#### 测试
+#### 编译并使用so
+
+为了工程化部署，希望编译后产生.so文件以便动态调用。
+
+##### 编译生成so文件
+
+首先将Makefile的`LIBSO=1`，运行`$make`编译后就会产生一个`libdarknet.so`文件。
+
+##### 创建工程
+
+建立工程文件夹并创建目录如下：
 
 ```
-sudo ./darknet detect cfg/yolov3.cfg yolov3.weights data/dog.jpg
+project/
+  |-src/
+    |-main.cpp               #主程序文件
+  |-lib/
+    |-libdarknet.so          #编译生成的so文件
+  |-include/
+    |-yolo_v2_class.hpp      #将darknet-master/include/yolo_v2_class.hpp文件复制过来
+  |-data/                    #将darknet-master/data/coco.names文件复制过来
+  |-cfg/                     #yolov3-tiny.cfg文件
+  |-build/
+  |-CMakeLists.txt
+  |-yolov3-tiny.weights
+```
+
+
+
+CMakeLists.txt内容如下：
+
+```
+cmake_minimum_required(VERSION 2.8)
+project(test_libdarknet)
+
+add_definitions(-std=c++11)
+ADD_DEFINITIONS(-DOPENCV)
+
+# find opencv
+find_package(OpenCV REQUIRED)
+#message(${OpenCV_INCLUDE_DIRS})
+message(STATUS "Debug:Opencv include dir " ${OpenCV_INCLUDE_DIRS})
+
+#这个是 yolo 动态库的路径
+find_library(darknet libdarknet.so ./lib/)
+include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include) 
+#yolo 代码路径
+aux_source_directory(../src/ DIR_SRC)
+add_executable(test_libdarknet ../src/main.cpp)
+target_link_libraries(test_libdarknet ${OpenCV_LIBS} ${darknet})
+
+```
+
+main.cpp文件内容如下
+
+```
+#include <iostream>
+#include <iomanip>
+#include <vector>
+#include <fstream>
+#include <opencv2/opencv.hpp>            // C++
+#include <opencv2/highgui/highgui_c.h>   // C
+#include <opencv2/imgproc/imgproc_c.h>   // C
+#include "yolo_v2_class.hpp" 
+using namespace std;
+using namespace cv;
+
+void show_console_result(std::vector<bbox_t> const result_vec, std::vector<std::string> const obj_names, int frame_id = -1) {
+    if (frame_id >= 0) std::cout << " Frame: " << frame_id << std::endl;
+    for (auto &i : result_vec) {
+	if (obj_names.size() > i.obj_id) std::cout << obj_names[i.obj_id] << " - ";
+	std::cout << "obj_id = " << i.obj_id << ",  x = " << i.x << ", y = " << i.y
+	    << ", w = " << i.w << ", h = " << i.h
+	    << std::setprecision(3) << ", prob = " << i.prob << std::endl;
+    }
+}
+void draw_boxes(cv::Mat mat_img, std::vector<bbox_t> result_vec, std::vector<std::string> obj_names,
+	int current_det_fps = -1, int current_cap_fps = -1)
+{
+    int const colors[6][3] = { { 1,0,1 },{ 0,0,1 },{ 0,1,1 },{ 0,1,0 },{ 1,1,0 },{ 1,0,0 } };
+
+    for (auto &i : result_vec) {
+	cv::Scalar color = obj_id_to_color(i.obj_id);
+	cv::rectangle(mat_img, cv::Rect(i.x, i.y, i.w, i.h), color, 2);
+	if (obj_names.size() > i.obj_id) {
+	    std::string obj_name = obj_names[i.obj_id];
+	    if (i.track_id > 0) obj_name += " - " + std::to_string(i.track_id);
+	    cv::Size const text_size = getTextSize(obj_name, cv::FONT_HERSHEY_COMPLEX_SMALL, 1.2, 2, 0);
+	    int max_width = (text_size.width > i.w + 2) ? text_size.width : (i.w + 2);
+	    max_width = std::max(max_width, (int)i.w + 2);
+	    //max_width = std::max(max_width, 283);
+	    std::string coords_3d;
+	    if (!std::isnan(i.z_3d)) {
+		std::stringstream ss;
+		ss << std::fixed << std::setprecision(2) << "x:" << i.x_3d << "m y:" << i.y_3d << "m z:" << i.z_3d << "m ";
+		coords_3d = ss.str();
+		cv::Size const text_size_3d = getTextSize(ss.str(), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, 1, 0);
+		int const max_width_3d = (text_size_3d.width > i.w + 2) ? text_size_3d.width : (i.w + 2);
+		if (max_width_3d > max_width) max_width = max_width_3d;
+	    }
+
+	    cv::rectangle(mat_img, cv::Point2f(std::max((int)i.x - 1, 0), std::max((int)i.y - 35, 0)),
+		    cv::Point2f(std::min((int)i.x + max_width, mat_img.cols - 1), std::min((int)i.y, mat_img.rows - 1)),
+		    color, CV_FILLED, 8, 0);
+	    putText(mat_img, obj_name, cv::Point2f(i.x, i.y - 16), cv::FONT_HERSHEY_COMPLEX_SMALL, 1.2, cv::Scalar(0, 0, 0), 2);
+	    if(!coords_3d.empty()) putText(mat_img, coords_3d, cv::Point2f(i.x, i.y-1), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cv::Scalar(0, 0, 0), 1);
+	}
+    }
+    if (current_det_fps >= 0 && current_cap_fps >= 0) {
+	std::string fps_str = "FPS detection: " + std::to_string(current_det_fps) + "   FPS capture: " + std::to_string(current_cap_fps);
+	putText(mat_img, fps_str, cv::Point2f(10, 20), cv::FONT_HERSHEY_COMPLEX_SMALL, 1.2, cv::Scalar(50, 255, 0), 2);
+    }
+}
+std::vector<std::string> objects_names_from_file(std::string const filename) {
+    std::ifstream file(filename);
+    std::vector<std::string> file_lines;
+    if (!file.is_open()) return file_lines;
+    for(std::string line; getline(file, line);) file_lines.push_back(line);
+    std::cout << "object names loaded \n";
+    return file_lines;
+}
+int main(int argc, char ** argv)
+{
+    std::string  names_file = "data/coco.names";
+    std::string  cfg_file = "cfg/yolov3-tiny.cfg";
+    std::string  weights_file = "yolov3-tiny.weights";
+    std::string filename;
+
+    if (argc > 4) {    //voc.names yolo-voc.cfg yolo-voc.weights test.mp4
+        names_file = argv[1];
+        cfg_file = argv[2];
+        weights_file = argv[3];
+        filename = argv[4];
+    }
+    else if (argc > 1) {
+	    filename = argv[1];
+    }
+    float const thresh = (argc > 5) ? std::stof(argv[5]) : 0.2;
+    Detector detector(cfg_file, weights_file);
+    for(int i=0;i<5;i++){
+        auto obj_names = objects_names_from_file(names_file);
+        cv::Mat mat_img = cv::imread(filename);
+
+        auto start = std::chrono::steady_clock::now();
+        std::vector<bbox_t> result_vec = detector.detect(mat_img);
+        auto end = std::chrono::steady_clock::now();
+        std::chrono::duration<double> spent = end - start;
+        std::cout << " Time: " << spent.count() << " sec \n";
+
+        //result_vec = detector.tracking_id(result_vec);    // comment it - if track_id is not required
+        draw_boxes(mat_img, result_vec, obj_names);
+        cv::imshow("window name", mat_img);
+        show_console_result(result_vec, obj_names);
+        cv::waitKey(10);
+    }
+    return 0;
+}
+```
+
+##### 运行
+
+```
+sudo ./build/test_libdarknet dog.jpg
 ```
 
 #### 问题及解决
@@ -383,11 +516,64 @@ NVCC=nvcc
 NVCC=/usr/local/cuda-9.0/bin/nvcc
 ```
 
-
-
-#### 问题二：
+##### 问题二：
 
 https://blog.csdn.net/slzlincent/article/details/86568148
+
+## 训练自定义数据集
+
+### 配置训练环境
+
+#### 创建.cfg文件
+
+- set network size width=416 height=416 or any value multiple of 32
+- change line classes=80 to your number of objects in each of 3 [yolo]-layers
+- change [filters=255] to filters=(classes + 5)x3 in the 3 [convolutional] before each [yolo] layer, keep in mind that it only has to be the last [convolutional] before each of the [yolo] layers.
+
+- max_batches一般设置为num_classes\*2000，但至少不小于6000，steps=0.8\*max_batches, 0.9*max_batches；
+
+#### 创建data/obj.data，data/obj.names
+
+- 将训练集中图片路径写入train.txt，注意train.txt的每一行都是图片的完整路径。
+- obj.data添加如下内容：
+
+```python
+classes=10                          #类别数量
+train=/home/aistudio/data/train.txt #train.txt每一行存放一张训练集图片路径；
+valid=/home/aistudio/data/valid.txt #本行可省略，valid.txt每一行存放一张验证集图片路径；
+names=data/obj.names                #类别名称文件
+backup=backup/
+
+```
+
+- 将所有.txt labels文件放到images文件目录下，Linux下命令例如`cp labels/* images/`。
+
+#### 开始训练
+
+运行如下命令：
+
+```python
+#yolov4
+darknet.exe detector train data/obj.data yolov4.cfg yolov4.conv.137
+#yolov3-tiny
+darknet.exe detector train data/obj.data yolov3-tiny_visdrone.cfg yolov3-tiny.conv.15
+```
+
+如果需要train with `-map` flag，运行命令：
+
+```
+darknet.exe detector train data/obj.data yolo-obj.cfg yolov4.conv.137 -map
+```
+
+训练好的参数保存在backup/下。
+
+### 测试
+
+#### mAP
+
+```
+darknet.exe detector map data/obj.data yolo-obj.cfg backup\yolo-obj_7000.weights
+```
 
 ## darknet命令
 
@@ -399,7 +585,7 @@ AlexeyAB版本的darknet提供了非常多的使用命令，你可以通过使�
 
 ```
 #根据模型结构`.cfg`文件，加载模型初始参数`yolov4.conv.137`使用`obj.data`内规定的训练集进行训练
-darknet.exe detector train data/obj.data yolov4.cfg yolov4.conv.137
+darknet.exe detector train data/obj.data cfg/yolov4.cfg weights/yolov4.conv.137
 ```
 
 
