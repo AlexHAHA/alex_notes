@@ -388,3 +388,31 @@ NVCC=/usr/local/cuda-9.0/bin/nvcc
 #### 问题二：
 
 https://blog.csdn.net/slzlincent/article/details/86568148
+
+## darknet命令
+
+AlexeyAB版本的darknet提供了非常多的使用命令，你可以通过使用这些作者提供好的命令来调用darknet相关函数完成如训练、检测等操作。
+
+在Windows下，命令的开头是'darknet.exe'，而Linux下，命令的开头是'./darknet'。
+
+### 训练
+
+```
+#根据模型结构`.cfg`文件，加载模型初始参数`yolov4.conv.137`使用`obj.data`内规定的训练集进行训练
+darknet.exe detector train data/obj.data yolov4.cfg yolov4.conv.137
+```
+
+
+
+### 提取卷积层weights
+
+在用户训练自己的模型时，从头开始训练非常浪费时间，可以在基于别人训练好的模型提取卷积层的参数做为模型训练的初始参数。
+
+举例如下：
+
+```
+#根据模型结构`.cfg`文件，加载模型参数`.weights`提取前面`15`层的参数保存至`yolov3-tiny.conv.15`
+darknet.exe partial cfg/yolov3-tiny.cfg yolov3-tiny.weights yolov3-tiny.conv.15 15
+```
+
+在`darknet/build/darknet/x64/partial.cmd`给出了更多模型的参数提取方式，可以参考。
