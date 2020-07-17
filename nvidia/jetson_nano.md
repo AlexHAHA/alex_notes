@@ -1,3 +1,5 @@
+
+
 ## pip3
 
 ```
@@ -124,9 +126,9 @@ python3
 安装更新，编译工具等
 
 ```
-sudo apt-add-repository universe
-sudo apt-get update
-sudo apt-get install -y \
+$ sudo apt-add-repository universe
+$ sudo apt-get update
+$ sudo apt-get install -y \
 	build-essential \
 	cmake \
 ```
@@ -134,7 +136,7 @@ sudo apt-get install -y \
 安装video，picture工具
 
 ```
-sudo apt-get install -y \
+$ sudo apt-get install -y \
     libavcodec-dev \
     libavformat-dev \
     libavutil-dev \
@@ -154,27 +156,54 @@ sudo apt-get install -y \
     qt5-default \
     zlib1g-dev \
     pkg-config
-# 只编译安装python3的opencv版本
-sudo apt-get install python3-dev python3-numpy python3-py python3-pytest
+# 
+
+```
+
+还有两个依赖项
+
+```
+$ sudo apt-get install libatlas-base-dev gfortran
+```
+
+安装python相关依赖
+
+```
+$ sudo apt-get install python2.7-dev
+$ sudo apt-get install python3-dev python3-numpy python3-py python3-pytest
 ```
 
 安装GStreamer
 
 ```
-sudo apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev 
+$ sudo apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev 
 ```
 
 2、下载opencv4.1.0
 
 ```
-sudo apt install -y curl
-curl -L https://github.com/opencv/opencv/archive/4.1.0.zip -o opencv-4.1.0.zip
-curl -L https://github.com/opencv/opencv_contrib/archive/4.1.0.zip -o opencv_contrib-4.1.0.zip
+$ sudo apt install -y curl
+$ curl -L https://github.com/opencv/opencv/archive/4.1.0.zip -o opencv-4.1.0.zip
+$ curl -L https://github.com/opencv/opencv_contrib/archive/4.1.0.zip -o opencv_contrib-4.1.0.zip
 ```
+
+注意，如果需要安装其他版本的opencv例如3.4.10，只需要将上面*4.1.0*替换为*3.4.10*即可。
+
+也可以在github上直接下对应版本的压缩包，具体方法是找到opencv或opencv_contrib仓库主页，点击**tags**，然后可以选择**release**，就可以找对应版本了。
+
+**opencv:** https://github.com/opencv/opencv/releases
+
+**opencv-contrib:** https://github.com/opencv/opencv_contrib/releases
+
+另外在下载opencv的时候也可以去官网下载：
+
+**opencv:**https://opencv.org/releases/，点击对应opencv版本下的sources下载。
 
 3、解压
 
-解压opencv和opencv_contrib后，将文件夹*opencv_3rdparty-contrib_xfeatures2d_boostdesc_20161012*和文件夹*opencv_3rdparty-contrib_xfeatures2d_vgg_20160317*内的所有文件拷贝只**opencv_contrib-4.1.0/modules/xfeatures2d/src/**路径下。
+解压opencv和opencv_contrib后，将文件夹*opencv_3rdparty-contrib_xfeatures2d_boostdesc_20161012*和文件夹*opencv_3rdparty-contrib_xfeatures2d_vgg_20160317*内的所有文件拷贝至**opencv_contrib-4.1.0/modules/xfeatures2d/src/**路径下。
+
+注意提前将[opencv_3rdparty](https://github.com/opencv/opencv_3rdparty)下的[boostdesc相关文件](https://github.com/opencv/opencv_3rdparty/tree/contrib_xfeatures2d_boostdesc_20161012)与[vgg相关文件](https://github.com/opencv/opencv_3rdparty/tree/contrib_xfeatures2d_vgg_20160317)下载并保存至opencv_contrib/modules/xfeatures2d/src/路径下。
 
 4、编译
 
@@ -194,7 +223,10 @@ cmake -D WITH_CUDA=ON \
       -D CMAKE_BUILD_TYPE=RELEASE \
       -D CMAKE_INSTALL_PREFIX=/usr/local \
       -D OPENCV_GENERATE_PKGCONFIG=ON ..
+#jetson-nano
 make -j3
+#tx2
+#make -j6
 ```
 
 5、安装
@@ -209,7 +241,7 @@ sudo make install
 
 #### 缺少文件**boostdesc_bgm.i**
 
-这是因为CMake过程中很多文件无法下载导致的，可以查看opencv/
+这是因为CMake过程中服务器无法连接很多文件无法下载导致的，可以查看opencv/
 
 参考：<https://answers.opencv.org/question/174456/about-build-opencv_contribute-fatal-error-boostdesc_bgmi-and-vgg/>
 

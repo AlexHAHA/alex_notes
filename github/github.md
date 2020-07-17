@@ -582,7 +582,7 @@ $ git revert -m 【要撤销的那条merge线的编号，从1开始计算（怎�
 
 
 
-## 问题解决
+## 实例讲解
 
 ### 推送错误1：两个人修改同一个分支
 
@@ -631,6 +631,12 @@ $ git clone git@github.com:AlexHAHA/alex_tutorials.git
 
 ```
 $ git clone https://github.com/AlexHAHA/alex_tutorials.git  my_tutorials
+```
+
+### git submodule
+
+```
+git submodule update --init --recursive
 ```
 
 ### git status

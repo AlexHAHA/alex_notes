@@ -16,7 +16,7 @@ AlexAB的github地址：https://github.com/AlexeyAB/darknet
 
 开发环境的配置以使用vs2015开发环境为例进行说明。
 
-打开vs项目`build\darknet\darknet.slnset`，并设置为**x64** and **Release**。
+打开vs项目`build\darknet\darknet.slnset`，并设置为**x64** and **Release**，一定要注意这里的设置，而且工程属性中的选择要与之一致！
 
 #### opencv配置
 
@@ -567,12 +567,12 @@ darknet.exe detector train data/obj.data yolo-obj.cfg yolov4.conv.137 -map
 
 训练好的参数保存在backup/下。
 
-### 测试
+### 评估mAP
 
-#### mAP
+加载训练好的参数，将使用`obj.data`定义的valid进行mAP评估。
 
 ```
-darknet.exe detector map data/obj.data yolo-obj.cfg backup\yolo-obj_7000.weights
+darknet.exe detector map data/obj.data yolo-obj.cfg backup/yolo-obj_7000.weights
 ```
 
 ## darknet命令
