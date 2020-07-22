@@ -247,6 +247,33 @@ static inline void mavlink_msg_heartbeat_decode(const mavlink_message_t* msg, ma
 
 
 
+## Display In HTML
+
+在mavlink\doc文件夹下给出了两种生成HTML的方法。
+
+1. php: 可以使用PHP study创建一个网页，将doc下的内容放到该网页对应的本地文件夹中。
+
+   修改一下mavlink.php文件内容：
+
+```
+# 将common.xml文件拷贝到网页对应的本地文件夹，并指定下文件路径
+$xml_file_name = "./common.xml";
+# mavlink_to_html_table.xsl已经存在，重新指定下路径即可
+$xsl_file_name= "./mavlink_to_html_table.xsl";
+```
+
+​      在php study的设置菜单，选择“配置文件”->php.ini，双击下面的php7.3.4.nts即可打开php.ini文件，然后找  到**;extension=xsl**并去掉**;**（即去掉注释）
+
+2. python: 运行doc/mavlink_gitbook.py文件即可，默认在doc文件夹下生成messages文件夹，存放生成后的html文件。
+
+
+
+## How To Use
+
+
+
+
+
 
 
 
