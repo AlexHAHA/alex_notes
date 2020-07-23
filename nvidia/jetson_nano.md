@@ -229,6 +229,13 @@ make -j3
 #make -j6
 ```
 
+或者在build文件夹下创建my_cmake.sh文件，添加以上内容后，执行：
+
+```
+$chmod u+x my_cmake.sh
+$./my_cmake.sh
+```
+
 5、安装
 
 ```

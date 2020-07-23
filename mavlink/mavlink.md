@@ -1,4 +1,4 @@
-# mavlink
+# MAVLink
 
 ## Packet Format
 
@@ -245,6 +245,68 @@ static inline void mavlink_msg_heartbeat_decode(const mavlink_message_t* msg, ma
 
 
 
+## How To Use
+
+### Generate headers
+
+首先下载[mavlink](https://github.com/mavlink/mavlink/)仓库代码，MAVLink仓库代码提供了GUI或者命令行两种方式生成不同语言的”Header"，最方便的就是运行GUI，可以通过如下命令行：
+
+```
+$python mavgenerate.py
+```
+
+接下来根据GUI界面提示即可。
+
+### Code in python
+
+```python
+import time
+import socket
+
+from mavlink import *
+"""
+    向GCS发送Heartbeat消息并接收GCS发送的Heartbeat消息
+"""
+class Device(object): 
+    """
+    创建设备文件，作为file参数传入MAVLink类，由于MAVLink发送数据使用file.write()，故Device需要将设备发送函数映射至write()。
+    """
+    def __init__(self, device_ip, device_port = 14550):
+        #udp协议
+        self.server      = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  
+        self.device_ip   = device_ip     # gcs(目标) IP
+        self.device_port = device_port # gcs(目标) 端口
+        self.device_address = (self.device_ip, self.device_port)
+    
+    def write(self, data_send): 
+        # mavlink对象调用此函数发送数据
+        sent_callback = self.server.sendto(data_send, self.device_address)
+
+def main():
+    local_addr = ("127.0.0.1", 14551)
+    gcs_addr   = ("127.0.0.1", 14550)
+    sock       = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    # 绑定本地端口，方便接收外部数据
+    sock.bind(local_addr)
+    dev = Device(gcs_addr[0], gcs_addr[1])
+    drone = MAVLink(dev, 1, 200)
+
+    for i in range(10):
+        print(f">>> Communite loop {i}th")
+        print(f"send heartbeat msg")
+        drone.heartbeat_send(MAV_TYPE_HELICOPTER, MAV_AUTOPILOT_GENERIC, MAV_MODE_GUIDED_ARMED, 0, MAV_STATE_ACTIVE)
+        # 接收消息
+        data, addr = sock.recvfrom(1024)
+        if len(data) > 0:
+            result = drone.parse_char(data)
+            # 判断msg的类型
+            if isinstance(result, MAVLink_heartbeat_message):
+                print(f"received heartbeat: sys={result.get_srcSystem()}, cmp={result.get_srcComponent()}")
+        time.sleep(1)
+if __name__ == '__main__':
+    main()
+```
+
 
 
 ## Display In HTML
@@ -265,10 +327,6 @@ $xsl_file_name= "./mavlink_to_html_table.xsl";
 ​      在php study的设置菜单，选择“配置文件”->php.ini，双击下面的php7.3.4.nts即可打开php.ini文件，然后找  到**;extension=xsl**并去掉**;**（即去掉注释）
 
 2. python: 运行doc/mavlink_gitbook.py文件即可，默认在doc文件夹下生成messages文件夹，存放生成后的html文件。
-
-
-
-## How To Use
 
 
 
