@@ -79,8 +79,6 @@ Messages are encoded within the MAVLink packet:
 
 定义了所有msgid对应的数据结构。
 
-
-
 ### XML
 
 一个.xml文件的根字段为<mavlink>，包含了两个主要字段：<enums>和<messages>，整个文件的的具体格式内容如下：
