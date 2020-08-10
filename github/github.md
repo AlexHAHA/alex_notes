@@ -153,7 +153,7 @@ User BoolPi
 IdentityFile ~/.ssh/id_rsa_boolpi
 ```
 
-### git clone
+#### git clone
 
 拷贝远程仓库
 
