@@ -92,7 +92,11 @@ deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ xenial-backports main restricte
 
 #### CUDA
 
-安装路径为`/usr/local/cuda-9.0`，但你也会在`/usr/local`找到文件夹`cuda`，其实这个是前面cuda路径的快捷方式！
+CUDA默认已经安装，其安装路径为`/usr/local/cuda-9.0`，但你也会在`/usr/local`找到文件夹`cuda`，其实这个是前面cuda路径的快捷方式！如果没有安装可以通过如下命令安装：
+
+```
+sudo apt install cuda-toolkit-9.0
+```
 
 查看版本命令：
 
@@ -102,7 +106,9 @@ cat /usr/local/cuda/version.txt
 nvcc -V
 ```
 
-当前版本是9.0
+当前版本是9.0。
+
+
 
 #### cuDNN
 
